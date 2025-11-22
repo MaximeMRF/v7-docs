@@ -1,0 +1,13 @@
+@let(filePath = $renderingContext.vFile.path)
+@let(hrefParts = href.split('#'))
+@if(hrefParts[0].endsWith('.md') || hrefParts[0].endsWith('.mdc'))
+  @let(transformedPath = resolveLink(filePath, hrefParts[0]))
+  @if(transformedPath)
+    @assign(node.properties.href = `${transformedPath}${hrefParts[1] ? `#${hrefParts[1]}` : ''}`)
+  @else
+    @eval($renderingContext.vFile.messages.push(`Cannot resolve link to ${hrefParts[0]}`))
+  @end
+@end
+<a {{{ $markdown.utils.stringifyAttributes(node.properties) }}}>
+  @markdownSlot()
+</a>

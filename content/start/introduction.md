@@ -5,7 +5,7 @@ description: 'An overview of AdonisJS and the design principles behind it.'
 
 # Introduction
 
-AdonisJS is a **backend-first, type-safe framework** for building web applications with Node.js and TypeScript. It provides the core building blocks for writing and maintaining complete backends, eliminating the need for third-party services to handle common features such as authentication, file uploads, caching, and rate limiting.
+AdonisJS is a **backend-first, type-safe framework** for building web applications with Node.js and TypeScript. It provides the core building blocks for writing and maintaining complete backends, eliminating the need for third-party services to handle **common features such as authentication, file uploads, caching, and rate limiting**.
 
 Each AdonisJS application is written in TypeScript, runs in ESM mode, and offers end-to-end type safety across the entire stack.
 
@@ -21,13 +21,11 @@ AdonisJS provides the structure, consistency, and tooling expected from a full-f
 
 It is suitable for teams that value:
 
-- **Ownership of backend logic** — Build authentication, file uploads, caching, rate limiting, and more without delegating core features to external services.
+- **Ownership of backend logic** — Build critical features in-house rather than depending on external services for authentication, payments, or file handling.
 
 - **Cohesive developer experience** — Every AdonisJS application follows the same conventions and directory structure, making it easy to onboard new developers and share knowledge across teams.
 
-- **Type safety across the stack** — Built fully in TypeScript with ESM, AdonisJS offers compile-time confidence without runtime overhead.
-
-- **Feature-rich foundations** — Includes essential backend tools such as routing, validation, ORM, mailer, and job queues, all maintained under a unified ecosystem.
+- **Unified ecosystem** — Core features are maintained together under consistent quality standards, eliminating dependency fragmentation.
 
 - **Extensibility and freedom** — Core features are built from low-level packages that you can use directly to create custom flows, integrations, or abstractions.
 
@@ -37,11 +35,11 @@ AdonisJS is designed to provide everything you need for real-world backend appli
 
 AdonisJS is designed for real-world backend applications:
 
-- **REST APIs** — Build type-safe APIs for mobile apps or SPAs with built-in validation, authentication, and rate limiting. Companies use AdonisJS to power APIs serving millions of requests.
+- **REST APIs** — Build type-safe APIs for mobile apps or SPAs. Companies use AdonisJS to power APIs serving millions of requests.
 
 - **Full-stack web applications** — Use Edge templates for server-rendered pages, or pair with Vue/React for hybrid applications. The MVC structure keeps your backend organized as your app grows.
 
-- **SaaS platforms** — Build multi-tenant applications with authentication, authorization, file uploads, email notifications, and background jobs—all without relying on third-party services for core functionality.
+- **SaaS platforms** — Build multi-tenant applications without relying on third-party services for core functionality like authentication, authorization, or background jobs.
 
 Whether you're building a startup MVP or a production system serving thousands of users, AdonisJS provides the foundation without getting in your way.
 
@@ -51,13 +49,13 @@ Many frameworks introduce enterprise abstractions that complicate projects witho
 
 It offers a **practical development model** that focuses on clarity, type safety, and maintainability rather than patterns for their own sake. The framework encourages good structure through conventions but never enforces heavy architectural layers.
 
-Developers familiar with Express or Fastify will recognize AdonisJS as an approachable yet more structured framework. The framework includes batteries such as routing, middleware, validation, and ORM out of the box, allowing teams to focus on application logic instead of building common patterns repeatedly.
+The framework includes batteries such as routing, middleware, validation, and ORM out of the box, allowing teams to focus on application logic instead of building common patterns repeatedly.
 
 AdonisJS APIs are functional and modern. You can use class-based components where a structured approach is helpful, such as in controllers, models, and services.
 
 ## How AdonisJS compares
 
-**vs. Express/Fastify** — AdonisJS provides structure and conventions that Express lacks, while remaining just as performant. You get authentication, validation, and ORM out of the box instead of assembling packages yourself.
+**vs. Express/Fastify** — AdonisJS provides structure and conventions that Express lacks, while remaining just as performant. Instead of assembling packages yourself, you get an integrated toolkit out of the box.
 
 **vs. NestJS** — AdonisJS focuses on practical patterns over enterprise abstractions. No decorators everywhere, no dependency injection containers to configure—just straightforward TypeScript code that follows clear conventions.
 
@@ -81,7 +79,7 @@ Most backend code, such as routing, controllers, models, and middleware, stays t
 
 AdonisJS has been in active development since 2015, with version 7 representing years of real-world usage and refinement. The framework is maintained by its creator full-time, with support from the core team members and an active community.
 
-The ecosystem includes official packages for authentication, sessions, Redis, mail, database management, and more—all maintained by the core team with the same quality standards. Community packages extend functionality for specific needs like payment processing, cloud storage, and third-party integrations.
+The ecosystem includes official packages for common backend needs—all maintained by the core team with the same quality standards. Community packages extend functionality for specific needs like payment processing, cloud storage, and third-party integrations.
 
 All documentation, tooling, and packages follow semantic versioning, ensuring stable upgrades and long-term maintainability.
 
@@ -89,8 +87,6 @@ All documentation, tooling, and packages follow semantic versioning, ensuring st
 
 AdonisJS documentation is organized to guide both new and experienced developers:
 
-- If this is your **first time** using AdonisJS, start with the [Tutorial →](./tutorials/index.md) to build a small application from scratch.
+- If this is your **first time** using AdonisJS, then continue reading all the docs in the **Start** section and eventually build an app by following the [Tutorial](./tutorial/hypermedia/overview.md).
 
-- If you already know the basics, explore the [Guides →](./guides/index.md) to learn specific topics like validation, database management, or testing.
-
-- To understand how the framework is structured internally, read the [Architecture →](./architecture/index.md) section for an in-depth explanation of core design principles.
+- If you already know the basics, explore the [Guides](../guides/http/routing.md) to learn specific topics like validation, database management, or testing.

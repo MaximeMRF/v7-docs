@@ -8,6 +8,11 @@
         "contentPath": "./introduction.md"
       },
       {
+        "title": "Pick your path",
+        "permalink": "stacks-and-starter-kits",
+        "contentPath": "./pick_your_path.md"
+      },
+      {
         "title": "Installation",
         "permalink": "installation",
         "contentPath": "./installation.md"

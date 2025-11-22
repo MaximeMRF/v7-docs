@@ -1,0 +1,16 @@
+<div class="card sm:flex gap-6">
+  <div class="card-banner flex items-center justify-center overflow-hidden rounded-xl border border-[#EBF6FF] dark:border-neutral-700 ">
+    <img src="{{ asset(logo) }}" width="45" alt="">
+  </div>
+  <div class="flex-1 mt-3">
+    <span class="text-neutral-900 dark:text-neutral-50 font-semibold mb-1.5 block">{{ name }}</span>
+    <div>
+      @markdownSlot()
+    </div>
+    <div class="flex gap-4">
+      @each(link in links)
+        <a href="{{ link.href }}" class="text-sm" target="_blank">{{ link.text }}</a>
+      @end
+    </div>
+  </div>
+</div>

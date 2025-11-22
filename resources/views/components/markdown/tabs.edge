@@ -1,0 +1,16 @@
+<tab-container class="tabs" role="tablist">
+  @each((tab, index) in node.children)
+    @assign(tab.properties.index = index)
+    <button {{
+      html.attrs({
+        class: 'tab',
+        type: 'button',
+        id: `tab-${index}`,
+        role: 'tab',
+      })
+    }}>
+      {{ tab.properties.title }}
+    </button>
+  @end
+  @markdownSlot()
+</tab-container>

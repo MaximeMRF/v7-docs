@@ -9,40 +9,47 @@ This guide covers the recommended development environment for AdonisJS applicati
 
 ## Overview
 
-AdonisJS applications come with a fully configured development environment out of the box. TypeScript, ESLint, and Prettier are pre-configured with sensible defaults, allowing you to start building immediately without manual setup.
+AdonisJS applications come with a fully configured development environment out of the box. **TypeScript, ESLint, and Prettier** are pre-configured with sensible defaults, allowing you to start building immediately without manual setup.
 
 This guide explains what's already configured in your project, recommends optional editor extensions that enhance the development experience, and provides guidance on choosing a database for local development. Understanding these configurations helps you leverage the full capabilities of the framework and maintain consistency across your team.
 
 ## Code Editors and Extensions
 
-AdonisJS works with any modern code editor that supports **TypeScript**. The framework does not rely on custom domain-specific languages (DSLs), so most editors provide full language support out of the box. The only framework-specific syntax is the **Edge** templating engine, which benefits from dedicated syntax highlighting extensions.
+AdonisJS works with any modern code editor that supports **TypeScript**. The framework does not rely on custom domain-specific languages (DSLs), so most editors provide full language support out of the box. The only framework-specific syntax is the **Edge templating engine**, which benefits from dedicated syntax highlighting extensions.
 
-### Recommended Editors
+:::card{name="AdonisJS Extension" logo="resources/assets/adonisjs-icon.svg"}
+---
+links:
+  - href: https://marketplace.visualstudio.com/items?itemName=jripouteau.adonis-vscode-extension
+    text: VSCode
+---
 
-The following editors have extensions that enhance the AdonisJS development experience:
-
-| Editor                 | Extensions Available     | Notes                                                  |
-| ---------------------- | ------------------------ | ------------------------------------------------------ |
-| **Visual Studio Code** | AdonisJS, Japa, Edge     | Full ecosystem support with IntelliSense and debugging |
-| **Zed Editor**         | Edge Syntax Highlighting | Lightweight with Edge template support                 |
-| **Sublime Text**       | Edge Syntax Highlighting | Minimal setup for Edge templates                       |
-
-### Visual Studio Code Extensions
-
-Visual Studio Code offers the most comprehensive AdonisJS tooling:
-
-- [**AdonisJS Extension**](https://marketplace.visualstudio.com/items?itemName=adonisjs.vscode-adonisjs) – Provides IntelliSense, route definitions, and framework-specific snippets
-- [**Japa Extension**](https://marketplace.visualstudio.com/items?itemName=thetutlage.vscode-japa) – Adds test runner integration and debugging support for Japa tests
-- [**Edge Extension**](https://marketplace.visualstudio.com/items?itemName=adonisjs.vscode-edge) – Enables syntax highlighting and IntelliSense for Edge templates
-
-:::tip
-Configuring your editor with ESLint and Prettier extensions enables automatic formatting on save and real-time linting feedback, reducing the need to run `npm run format` and `npm run lint` manually.
+Provides IntelliSense for AdonisJS APIs, file generators, and command palette integration for running Ace commands.
 :::
 
-### Other Editors
+:::card{name="Japa Extension" logo="resources/assets/japa-icon.svg"}
+---
+links:
+  - href: https://marketplace.visualstudio.com/items?itemName=jripouteau.japa-vscode
+    text: VSCode
+---
 
-- **Zed Editor** – [Edge Syntax Highlighting Extension](https://zed.dev/extensions/adonisjs-edge)
-- **Sublime Text** – [Edge Syntax Highlighting Package](https://packagecontrol.io/packages/Edge%20Syntax%20Highlighting)
+Test runner integration for running individual tests or test suites directly from the editor.
+:::
+
+:::card{name="Edge Templates Extension" logo="resources/assets/edge-icon.svg"}
+---
+links:
+  - href: https://marketplace.visualstudio.com/items?itemName=AdonisJS.vscode-edge
+    text: VSCode
+  - href: https://zed.dev/extensions/edge
+    text: Zed
+  - href: https://packagecontrol.io/packages/Edge%20templates%20extension
+    text: Sublime Text
+---
+
+Full syntax highlighting and basic autocomplete for Edge template files.
+:::
 
 ## TypeScript Setup
 

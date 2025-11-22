@@ -1,4 +1,5 @@
 import vine from '@vinejs/vine'
+import { dirname, relative, resolve } from 'node:path'
 import app from '@adonisjs/core/services/app'
 import { Collection } from '@adonisjs/content'
 import { type Infer } from '@vinejs/vine/types'
@@ -27,7 +28,7 @@ export const docsZones = ZONES.reduce(
       cache: app.inProduction,
       loader: loaders.jsonLoader(ZONE_DB_FILE),
       views: {
-        tree(data) {
+        permalinksTree(data) {
           return data.reduce<Record<string, Infer<typeof singleDoc>>>((result, node) => {
             node.children.forEach((doc) => {
               result[doc.permalink] = doc
@@ -35,8 +36,19 @@ export const docsZones = ZONES.reduce(
             return result
           }, {})
         },
-        findByPermalink(data, permalink: string) {
-          return this.tree(data)[permalink] ?? this.tree(data)[`/${permalink}`]
+        contentPathsTree(data) {
+          return data.reduce<Record<string, Infer<typeof singleDoc>>>((result, node) => {
+            node.children.forEach((doc) => {
+              result[doc.contentPath] = doc
+            })
+            return result
+          }, {})
+        },
+        findByPermalink(data, permalink) {
+          return this.permalinksTree(data)[permalink] ?? this.permalinksTree(data)[`/${permalink}`]
+        },
+        findByContentPath(data, contentPath) {
+          return this.contentPathsTree(data)[contentPath]
         },
       },
     })
@@ -47,12 +59,50 @@ export const docsZones = ZONES.reduce(
     [K in 'guides' | 'start']: Collection<
       typeof menuSchema,
       {
-        tree(data: Infer<typeof menuSchema>): Record<string, Infer<typeof singleDoc>>
+        permalinksTree(data: Infer<typeof menuSchema>): Record<string, Infer<typeof singleDoc>>
+        contentPathsTree(data: Infer<typeof menuSchema>): Record<string, Infer<typeof singleDoc>>
         findByPermalink(
           data: Infer<typeof menuSchema>,
           permalink: string
+        ): Infer<typeof singleDoc> | undefined
+        findByContentPath(
+          data: Infer<typeof menuSchema>,
+          contentPath: string
         ): Infer<typeof singleDoc> | undefined
       }
     >
   }
 )
+
+const start = await docsZones.start.load()
+const guides = await docsZones.guides.load()
+
+export function findDoc(permalink: string) {
+  let doc = start.findByPermalink(permalink)
+  if (!doc) {
+    doc = guides.findByPermalink(permalink)
+  }
+
+  if (doc) {
+    return {
+      doc,
+      zone: start,
+    }
+  }
+
+  return null
+}
+
+export function resolveLink(fromFile: string, toFile: string) {
+  const contentFilePath = app.makePath(resolve(dirname(fromFile), toFile))
+  let doc = start.findByContentPath(contentFilePath)
+  if (!doc) {
+    doc = guides.findByContentPath(contentFilePath)
+  }
+
+  if (doc) {
+    return doc.permalink
+  }
+
+  return null
+}

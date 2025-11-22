@@ -1,29 +1,19 @@
-import type { HttpContext } from '@adonisjs/core/http'
-import { docsZones } from '#collections/docs'
 import { errors } from '@adonisjs/core'
+import type { HttpContext } from '@adonisjs/core/http'
+import { findDoc, resolveLink } from '#collections/docs'
 
 export default class DocsController {
   async handle({ view, params, request }: HttpContext) {
     const permalink = params['*'].join('/')
-    const start = await docsZones.start.load()
-    const guides = await docsZones.guides.load()
-
-    if (start.findByPermalink(permalink)) {
-      return view.render('pages/doc', {
-        menu: start,
-        menuItem: start.findByPermalink(permalink),
-        permalink,
-      })
+    const doc = findDoc(permalink)
+    if (!doc) {
+      throw new errors.E_ROUTE_NOT_FOUND(['GET', request.url()])
     }
 
-    if (guides.findByPermalink(permalink)) {
-      return view.render('pages/doc', {
-        menu: guides,
-        menuItem: start.findByPermalink(permalink),
-        permalink,
-      })
-    }
-
-    throw new errors.E_ROUTE_NOT_FOUND(['GET', request.url()])
+    return view.share({ resolveLink }).render('pages/doc', {
+      menu: doc.zone,
+      menuItem: doc.doc,
+      permalink,
+    })
   }
 }

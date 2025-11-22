@@ -1,6 +1,6 @@
 ---
-title: "Installation"
-description: "Learn how to create a new AdonisJS application and start the development server."
+title: 'Installation'
+description: 'Learn how to create a new AdonisJS application and start the development server.'
 ---
 
 # Installation
@@ -40,19 +40,21 @@ This command starts an interactive setup and asks you to select a starter kit.
 AdonisJS offers three official starter kits. Each kit sets up a different type of application, depending on how you want to build your user interface and manage interactivity.
 
 - **Hypermedia Starter Kit** — Uses Edge as the server-side templating engine and integrates Alpine.js to add lightweight, reactive behavior to your frontend. Ideal for applications that primarily render HTML on the server and only need minimal frontend logic.
+
 - **React Starter Kit** — Uses Inertia.js alongside React to build a fullstack React application powered by the AdonisJS backend. It can operate as a server-rendered app or a Single Page Application (SPA), depending on your configuration.
+
 - **Vue Starter Kit** — Similar to the React setup, but with Vue as the frontend framework. It utilizes Inertia.js and provides the same full-stack capabilities — including backend-driven routing, shared state, and SPA support.
 
-All starter kits come pre-configured with sensible defaults, streamlined development workflows, and ready-to-use authentication features. For a detailed comparison and usage guidance, see the [Stacks and Starter Kits](./stacks-and-starter-kits.md) guide.
+All starter kits come pre-configured with sensible defaults, streamlined development workflows, and ready-to-use authentication features. For a detailed comparison and usage guidance, see the [Pick your path](./pick_your_path.md) guide.
 
 ## Project Defaults
 
 Every newly created AdonisJS application includes:
 
-* Opinionated folder structure.
-* [**Lucid ORM**]() configured with **SQLite** as the default database.
-* Built-in **authentication** flows for login and signup.
-* **ESLint** and **Prettier** setup with pre-defined configuration.
+- Opinionated folder structure.
+- [**Lucid ORM**]() configured with **SQLite** as the default database.
+- Built-in **authentication** flows for login and signup.
+- **ESLint** and **Prettier** setup with pre-defined configuration.
 
 These features help you get started quickly. You can customize, extend, or remove them as your project grows.
 
@@ -73,7 +75,6 @@ Once the development server is running, open your browser and visit [http://loca
 
 - **File watching (--watch)** automatically restarts the entire server process when you make changes to your code. While this approach takes slightly longer than HMR since it requires a full restart, it ensures a clean application state with every change and can be useful when working on server-side logic or when HMR updates aren't sufficient.
 
-
 ## Exploring Other Commands
 
 The `ace` command-line tool includes many commands for development and production workflows.
@@ -86,7 +87,4 @@ node ace
 
 ## Next Steps
 
-Next, choose one of the following paths:
-
-* Follow the [Tutorial](./tutorial.md) to build a complete application step-by-step.
-* Learn about the [Folder Structure](./folder-structure.md) to understand how AdonisJS organizes your project files.
+From here, you can continue to the next guide and learn about the [Folder Structure](./folder-structure.md) or can jump directly to the [Tutorial](./tutorial/hypermedia/overview.md) and create a complete application.
