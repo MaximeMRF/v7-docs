@@ -1,0 +1,25 @@
+<div class="code_snippet">
+  @if(node.properties.title)
+    <div class="code_snippet_header flex justify-between items-center">
+      <span class="code_snippet_title">{{ node.properties.title }}</span>
+      <button class="copy cursor-pointer p-1.5 backdrop-blur rounded-md overflow-hidden" title="Copy" aria-label="Copy" role="button">
+        @svg('mynaui:copy', { width: '20px', height: '20px', class: 'text-neutral-400 hover:text-neutral-300' })
+      </button>
+    </div>
+  @end
+  <div class="relative overflow-auto">
+<pre {{ $markdown.utils.stringifyAttributes(node.properties) }}>
+@markdownSlot()
+</pre>
+  @unless(node.properties.title)
+    <button
+      class="copy cursor-pointer absolute z-0 top-2 right-2.5 p-1.5 backdrop-blur rounded-md overflow-hidden"
+      title="Copy"
+      aria-label="Copy"
+      role="button"
+    >
+      @svg('mynaui:copy', { width: '20px', height: '20px', class: 'text-neutral-400 hover:text-neutral-300' })
+    </button>
+  @end
+</div>
+</div>

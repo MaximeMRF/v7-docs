@@ -1,15 +1,40 @@
 @layout()
   <div class="container-full mx-auto px-5 sm:px-10">
     <div class="md:border-l md:border-r border-woodsmoke-800/70 md:bg-[url('/resources/assets/docs-hero-bg.svg')] bg-no-repeat bg-top-bottom lg:grid xl:grid-cols-[260px_1fr_230px] lg:grid-cols-[270px_1fr] gap-4">
-      <aside class="pl-8 pr-3 sticky top-19 hidden lg:block pt-19 pb-11 max-h-screen overflow-y-auto">
-        @each(group in docs.all())
-          <button role="button" class="font-display text-15 text-white leading-5 mb-4 flex items-center gap-1.5">
-            <span class="inline-block">{{ group.category }}</span>  
-            @svg('mynaui:chevron-right', { class: 'w-4 h-4 mt-0.5 rotate-90 transition-transform' })
-          </button>
+      <aside class="pl-8 pr-3 sticky top-19 hidden lg:block pt-12 pb-11 max-h-screen overflow-y-auto">
+        <ul>
+          <li>
+            <a href="/introduction"> Start </a>
+          </li>
+          <li>
+            <a href="/guides/http/routing"> Guides </a>
+          </li>
+          <li>
+            <a href="/reference"> Reference </a>
+          </li>
+        </ul>
+
+        @each(group in menu.all())
+          @if(group.category !== 'Root')
+            <button role="button" class="font-display text-15 text-white leading-5 mb-4 flex items-center gap-1.5">
+              <span class="inline-block">{{ group.category }}</span>
+              @svg('mynaui:chevron-right', {
+                class: 'w-4 h-4 mt-0.5 rotate-90 transition-transform'
+              })
+            </button>
+          @end
           <ul class="mb-8 docs_sidebar_menu">
             @each(doc in group.children)
-              <li class="text-14 mb-1"><a href="" class="leading-5 block py-1 relative">{{ doc.title }}</a></li>
+              <li class="text-14 mb-1">
+                @!link({
+                  route: 'docs',
+                  routeParams: { '*': [doc.permalink] },
+                  text: doc.title,
+                  class: ['leading-5', 'block', 'py-1', 'relative', {
+                    'up-current': request.url() === `/${doc.permalink}`
+                  }]
+                })
+              </li>
             @end
           </ul>
         @end
@@ -17,7 +42,7 @@
 
       <main class="prose py-17 mx-auto relative">
         @let(doc = await $markdown.render({
-          file: docs.findByPermalink(request.param('*').join('/')).contentPath,
+          file: menuItem.contentPath,
           toc: {
             enabled: true,
             maxDepth: 3
@@ -40,6 +65,6 @@
           </div>
         </div>
       </aside>
-    </div> 
+    </div>
   </div>
 @end

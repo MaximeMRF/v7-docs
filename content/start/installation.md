@@ -1,0 +1,92 @@
+---
+title: "Installation"
+description: "Learn how to create a new AdonisJS application and start the development server."
+---
+
+# Installation
+
+This guide explains how to set up a new AdonisJS application from scratch. It covers the prerequisites, project creation, and starting the development server. You do not need prior experience with AdonisJS, but basic knowledge of Node.js is useful.
+
+## Prerequisites
+
+Before you begin, make sure you have the following tools installed:
+
+- **Node.js ≥ 24.x**
+- **npm ≥ 11.x**
+
+You can verify your installed versions using the following commands:
+
+```sh
+node -v
+npm -v
+```
+
+Check that your Node.js and npm versions meet these requirements before continuing. You can download the latest versions from the [Node.js website](https://nodejs.org/) or use a version manager like Volta/nvm.
+
+## Creating a new application
+
+AdonisJS provides the `create-adonisjs` initializer package to scaffold new applications. This package creates a new project directory with all necessary files, dependencies, and configuration based on your selections during the setup process.
+
+Replace `<project-name>` with your desired project name. The initializer will create a new directory with that name and set up your AdonisJS application inside it.
+
+```sh
+npm create adonisjs@latest <project-name>
+```
+
+This command starts an interactive setup and asks you to select a starter kit.
+
+### Available Starter Kits
+
+AdonisJS offers three official starter kits. Each kit sets up a different type of application, depending on how you want to build your user interface and manage interactivity.
+
+- **Hypermedia Starter Kit** — Uses Edge as the server-side templating engine and integrates Alpine.js to add lightweight, reactive behavior to your frontend. Ideal for applications that primarily render HTML on the server and only need minimal frontend logic.
+- **React Starter Kit** — Uses Inertia.js alongside React to build a fullstack React application powered by the AdonisJS backend. It can operate as a server-rendered app or a Single Page Application (SPA), depending on your configuration.
+- **Vue Starter Kit** — Similar to the React setup, but with Vue as the frontend framework. It utilizes Inertia.js and provides the same full-stack capabilities — including backend-driven routing, shared state, and SPA support.
+
+All starter kits come pre-configured with sensible defaults, streamlined development workflows, and ready-to-use authentication features. For a detailed comparison and usage guidance, see the [Stacks and Starter Kits](./stacks-and-starter-kits.md) guide.
+
+## Project Defaults
+
+Every newly created AdonisJS application includes:
+
+* Opinionated folder structure.
+* [**Lucid ORM**]() configured with **SQLite** as the default database.
+* Built-in **authentication** flows for login and signup.
+* **ESLint** and **Prettier** setup with pre-defined configuration.
+
+These features help you get started quickly. You can customize, extend, or remove them as your project grows.
+
+## Starting the Development Server
+
+After creating your app, move into your project directory and start the development server:
+
+```bash
+node ace serve --hmr
+```
+
+Once the development server is running, open your browser and visit [http://localhost:3333
+](http://localhost:3333). You should see the AdonisJS welcome page confirming your installation was successful.
+
+### Dev-server modes
+
+- **Hot Module replacement (--hmr)** is the recommended approach for most development scenarios. HMR updates your application in the browser without requiring a full page reload, preserving your application's state while reflecting code changes instantly. This provides the fastest development feedback loop, especially when working on frontend components or styles.
+
+- **File watching (--watch)** automatically restarts the entire server process when you make changes to your code. While this approach takes slightly longer than HMR since it requires a full restart, it ensures a clean application state with every change and can be useful when working on server-side logic or when HMR updates aren't sufficient.
+
+
+## Exploring Other Commands
+
+The `ace` command-line tool includes many commands for development and production workflows.
+
+To see all available commands, run:
+
+```bash
+node ace
+```
+
+## Next Steps
+
+Next, choose one of the following paths:
+
+* Follow the [Tutorial](./tutorial.md) to build a complete application step-by-step.
+* Learn about the [Folder Structure](./folder-structure.md) to understand how AdonisJS organizes your project files.

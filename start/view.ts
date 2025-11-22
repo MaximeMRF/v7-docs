@@ -8,7 +8,11 @@ import { icons as uiwIcons } from '@iconify-json/uiw'
 edge.use(edgeIconify)
 edge.use(edgeMarkdown, {
   prefix: 'markdown',
-  highlight: true,
+  highlight: {
+    enabled: true,
+    langs: ['typescript', 'json', 'edge', 'html', 'sql', 'bash', 'dotenv', 'tsx'],
+    theme: 'github-dark',
+  },
   allowHTML: true,
   toc: {
     enabled: true,
