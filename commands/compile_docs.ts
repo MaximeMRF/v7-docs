@@ -50,7 +50,10 @@ export default class CompileDocs extends BaseCommand {
   async run() {
     const { docsSections } = await import('#collections/docs')
     const guides = await docsSections.guides.load()
-    for (const group of guides.all()) {
+    const start = await docsSections.start.load()
+    const reference = await docsSections.reference.load()
+
+    for (const group of [...guides.all(), ...start.all(), ...reference.all()]) {
       for (const doc of group.children) {
         const action = this.logger.action(`Compiling ${doc.permalink}`)
         try {
