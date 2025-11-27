@@ -21,22 +21,22 @@ const noDashCase = vine.createRule((value, _, field) => {
   }
 })
 
-const singleDoc = vine.object({
+export const singleDoc = vine.object({
   title: vine.string(),
   permalink: vine.string().use(noSnakeCase()),
   oldUrls: vine.array(vine.string()).optional(),
   contentPath: vine.string().use(noDashCase()).toAbsolutePath(),
 })
 
-const categoryDocs = vine.object({
+export const categoryDocs = vine.object({
   category: vine.string(),
   children: vine.array(singleDoc.clone()),
 })
 
-const menuSchema = vine.array(categoryDocs)
+export const menuSchema = vine.array(categoryDocs)
 
 const sectionsNames: ['guides', 'start', 'reference'] = ['guides', 'start', 'reference']
-const docsSections = Collection.multi(sectionsNames, (section) => {
+export const docsSections = Collection.multi(sectionsNames, (section) => {
   return Collection.create({
     schema: menuSchema.clone(),
     cache: app.inProduction,

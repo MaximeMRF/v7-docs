@@ -1,18 +1,11 @@
-import { errors } from '@adonisjs/core'
+import { inject } from '@adonisjs/core'
+import { DocService } from '#services/doc_service'
 import type { HttpContext } from '@adonisjs/core/http'
-import { findDoc, resolveAsset, resolveLink } from '#collections/docs'
 
+@inject()
 export default class DocsController {
-  async handle({ view, params, request }: HttpContext) {
+  async handle({ view, params }: HttpContext, docService: DocService) {
     const permalink = params['*'].join('/')
-    const doc = await findDoc(permalink)
-    if (!doc) {
-      throw new errors.E_ROUTE_NOT_FOUND(['GET', request.url()])
-    }
-
-    return view.share({ resolveLink, resolveAsset }).render('pages/doc', {
-      ...doc,
-      permalink,
-    })
+    return docService.renderDoc(permalink, view)
   }
 }
