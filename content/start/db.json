@@ -87,19 +87,19 @@
         "title": "Contributing",
         "permalink": "contributing",
         "oldUrls": ["guides/preface/contribution-guide"],
-        "contentPath": "./resources/contributing"
+        "contentPath": "./resources/contributing.md"
       },
       {
         "title": "Releases",
         "permalink": "releases",
         "oldUrls": ["guides/preface/releases"],
-        "contentPath": "./resources/releases"
+        "contentPath": "./resources/releases.md"
       },
       {
         "title": "Governance",
         "permalink": "governance",
         "oldUrls": ["guides/preface/governance"],
-        "contentPath": "./resources/governance"
+        "contentPath": "./resources/governance.md"
       }
     ]
   }

@@ -1,4 +1,5 @@
 import edge from 'edge.js'
+import { DateTime } from 'luxon'
 import { tv } from 'tailwind-variants'
 import { toText } from 'hast-util-to-text'
 import { edgeMarkdown } from 'edge-markdown'
@@ -28,6 +29,7 @@ addCollection(tablerIcons)
 
 edge.global('tv', tv)
 edge.global('hastToText', toText)
+edge.global('DateTime', DateTime)
 edge.global('parseCodeblockTitle', function (title: string) {
   if (title.startsWith('❌')) {
     return {

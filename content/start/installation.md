@@ -27,10 +27,10 @@ Check that your Node.js and npm versions meet these requirements before continui
 
 AdonisJS provides the `create-adonisjs` initializer package to scaffold new applications. This package creates a new project directory with all necessary files, dependencies, and configuration based on your selections during the setup process.
 
-Replace `<project-name>` with your desired project name. The initializer will create a new directory with that name and set up your AdonisJS application inside it.
+Replace `[project-name]` with your desired project name. The initializer will create a new directory with that name and set up your AdonisJS application inside it.
 
 ```sh
-npm create adonisjs@latest <project-name>
+npm create adonisjs@latest [project-name]
 ```
 
 This command starts an interactive setup and asks you to select a starter kit.

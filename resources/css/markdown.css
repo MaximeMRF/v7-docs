@@ -12,6 +12,10 @@
   white-space: nowrap;
 }
 
+.prose td code {
+  white-space: normal;
+}
+
 .prose a code {
   color: inherit;
   background: none;
@@ -224,6 +228,10 @@
 
 .prose .media_container p {
   margin-bottom: 0;
+}
+
+.prose .media_container img {
+  border-radius: var(--radius-lg);
 }
 
 .prose p + .code_snippet {

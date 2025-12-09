@@ -1,8 +1,17 @@
 # Request
 
-The Request class holds all the information related to an HTTP request, including the request body, uploaded files, query string, URL, method, headers, and cookies. You access it via the `request` property of HttpContext, which is available in route handlers, middleware, and exception handlers.
+This guide covers working with HTTP requests in AdonisJS. You will learn about:
 
-This reference guide shows you how to read different parts of an HTTP request using the Request class methods.
+- Reading request body and uploaded files
+- Accessing query strings and route parameters
+- Working with request headers and metadata
+- Reading cookies
+- Understanding request ID generation
+- Configuring trusted proxies and IP address extraction
+
+## Overview
+
+The Request class holds all the information related to an HTTP request, including the request body, uploaded files, query string, URL, method, headers, and cookies. You access it via the `request` property of HttpContext, which is available in route handlers, middleware, and exception handlers.
 
 ## Reading request body and files
 
@@ -341,6 +350,86 @@ router.post('/checkout', async ({ request }) => {
 ```
 
 ## Content negotiation
+
+Content negotiation allows your application to serve different response formats or languages based on what the client accepts. The Request class provides methods to read the `Accept`, `Accept-Language`, `Accept-Charset`, and `Accept-Encoding` headers and match them against the formats your application supports.
+
+### Selecting response format
+
+Use the `accepts` method to determine the best response format based on the client's `Accept` header. This is useful when your API can return data in multiple formats like JSON, HTML, or XML.
+
+```ts title="start/routes.ts"
+import router from '@adonisjs/core/services/router'
+
+router.get('/posts', ({ request, response }) => {
+  const bestFormat = request.accepts(['html', 'json'])
+  
+  if (bestFormat === 'json') {
+    return response.json({ posts: [] })
+  }
+  
+  if (bestFormat === 'html') {
+    return response.view('posts/index')
+  }
+  
+  // Client doesn't accept any supported format
+  return response.status(406).send('Not Acceptable')
+})
+```
+
+The `types` method returns all accepted content types in order of client preference.
+
+```ts title="start/routes.ts"
+import router from '@adonisjs/core/services/router'
+
+router.get('/posts', ({ request }) => {
+  const acceptedTypes = request.types()
+  console.log(acceptedTypes) // ['application/json', 'text/html', '*/*']
+})
+```
+
+### Internationalization
+
+Use the `language` method to determine the best language based on the client's `Accept-Language` header. This helps serve content in the user's preferred language.
+
+```ts title="start/routes.ts"
+import router from '@adonisjs/core/services/router'
+
+router.get('/welcome', ({ request, response }) => {
+  const language = request.language(['en', 'fr', 'es']) || 'en'
+  
+  const messages = {
+    en: 'Welcome',
+    fr: 'Bienvenue',
+    es: 'Bienvenido'
+  }
+  
+  return response.send(messages[language])
+})
+```
+
+The `languages` method returns all accepted languages in order of client preference.
+
+```ts title="start/routes.ts"
+import router from '@adonisjs/core/services/router'
+
+router.get('/welcome', ({ request }) => {
+  const acceptedLanguages = request.languages()
+  console.log(acceptedLanguages) // ['en-US', 'fr', 'es']
+})
+```
+
+### Available methods
+
+| Method | Description |
+|--------|-------------|
+| `accepts(types)` | Returns the best matching content type or null |
+| `types()` | Returns all accepted content types in preference order |
+| `language(languages)` | Returns the best matching language or null |
+| `languages()` | Returns all accepted languages in preference order |
+| `charset(charsets)` | Returns the best matching charset or null |
+| `charsets()` | Returns all accepted charsets in preference order |
+| `encoding(encodings)` | Returns the best matching encoding or null |
+| `encodings()` | Returns all accepted encodings in preference order |
 
 ## Trusting Proxy Servers
 

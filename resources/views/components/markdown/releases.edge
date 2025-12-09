@@ -1,0 +1,31 @@
+@each(block in releaseBlocks)
+  <h2>
+    {{ DateTime.fromJSDate(block.date).toFormat('LLL yyyy') }}
+  </h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th>Tag</th>
+      </tr>
+    </thead>
+    <tbody>
+      @each((release, index) in block.releases)
+        @let(releaseTitle = await $markdown.render({
+          content: release.name,
+        }))
+        <tr>
+          <td>
+            <a href="{{ release.url }}">
+              {{{ releaseTitle.content.replace('<p>', '').replace('</p>', '') }}}
+            </a>
+          </td>
+          <td title="{{ `adonisjs/${release.repo}@` }}{{ release.tagName }}">
+            <code>{{ release.tagName }}</code>
+          </td>
+        </tr>
+      @end
+    </tbody>
+  </table>
+@end

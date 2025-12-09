@@ -11,8 +11,6 @@ This guide covers controllers in AdonisJS applications. You will learn how to:
 - Understand the controller lifecycle and request handling
 - Inject dependencies into controllers using the IoC container
 - Build RESTful resource-driven controllers following conventions
-- Register resourceful routes and manage nested resources
-- Filter, customize, and apply middleware to resource routes
 - Configure controller locations and barrel file generation
 
 :::note

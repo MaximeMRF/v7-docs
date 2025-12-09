@@ -1,6 +1,11 @@
 # Pick your path
 
-This guide introduces AdonisJS's approach to frontend development and the three primary stacks you can choose from. You will learn why AdonisJS is backend-first but frontend-flexible, understand the difference between Hypermedia, Inertia, and API-only approaches, see how the View layer works in each stack, and learn about the starter kits that provide opinionated setups for each approach.
+This guide introduces AdonisJS's approach to frontend development and the three primary stacks you can choose from. You will learn:
+
+- Why AdonisJS is backend-first but frontend-flexible.
+- Understand the difference between Hypermedia, Inertia, and API-only approaches
+- See how the View layer works in each stack. 
+- Learn about the starter kits that provide opinionated setups for each approach.
 
 ## Overview
 
@@ -28,7 +33,7 @@ In a Hypermedia application:
 
 This approach embraces the web's native capabilities and keeps most of your application's logic on the server where you have full control.
 
-Choose this approach when you want to build applications with the server in control, you prefer working primarily in one language (TypeScript) across your stack, or you want to minimize the amount of JavaScript your users download. Hypermedia applications can be highly interactive using libraries like Alpine.js and HTMX while keeping your frontend codebase lean and your deployment simple.
+Choose this approach when you want to build applications with the server in control, or you want to minimize the amount of JavaScript your users download. Hypermedia applications can be highly interactive using libraries like Alpine.js and HTMX while keeping your frontend codebase lean and your deployment simple.
 
 ### Inertia (React or Vue)
 
@@ -40,7 +45,7 @@ With Inertia:
 - Your controllers return data to Inertia components instead of rendering templates or returning JSON.
 - Navigation feels like a single-page application with smooth transitions, but your routing logic stays on the server where it's easier to protect and maintain.
 
-Inertia simplifies form submissions and data fetching while keeping your application a monolithic deployment. You get a modern, reactive user experience without building and maintaining a separate API layer.
+Inertia also simplifies form submissions and data fetching while keeping your application a monolithic deployment. You get a modern, reactive user experience without building and maintaining a separate API layer.
 
 Choose this approach when you want to use React or Vue but prefer server-side routing, you want to avoid the complexity of separate frontend and backend deployments, or you want a tightly integrated full-stack development experience. Visit [inertiajs.com](https://inertiajs.com) to learn more about how Inertia bridges the gap between server-side and client-side frameworks.
 
@@ -65,8 +70,14 @@ In the following example, you can see us using the same route, same controller, 
 ::::tabs
 :::tab{title="Hypermedia"}
 
-```ts
-// title: app/controllers/posts_controller.ts
+```ts title="start/routes.ts"
+import router from '@adonisjs/core/services/router'
+import { controllers } from '#generated/controllers'
+
+router.get('posts', [controllers.Posts, 'index'])
+```
+
+```ts title="app/controllers/posts_controller.ts"
 import Post from '#models/post'
 import { HttpContext } from '@adonisjs/core/http'
 
@@ -82,15 +93,21 @@ export default class PostsController {
 
 :::tab{title="Inertia"}
 
-```ts
-// title: app/controllers/posts_controller.ts
+```ts title="start/routes.ts"
+import router from '@adonisjs/core/services/router'
+import { controllers } from '#generated/controllers'
+
+router.get('posts', [controllers.Posts, 'index'])
+```
+
+```ts title="app/controllers/posts_controller.ts"
 import Post from '#models/post'
 import { HttpContext } from '@adonisjs/core/http'
 
 export default class PostsController {
   async index({ inertia }: HttpContext) {
     const posts = await Post.all()
-    return inertia.render('Posts/Index', { posts }) // [!code highlight]
+    return inertia.render('posts/index', { posts }) // [!code highlight]
   }
 }
 ```
@@ -99,8 +116,14 @@ export default class PostsController {
 
 :::tab{title="API-only"}
 
-```ts
-// title: app/controllers/posts_controller.ts
+```ts title="start/routes.ts"
+import router from '@adonisjs/core/services/router'
+import { controllers } from '#generated/controllers'
+
+router.get('posts', [controllers.Posts, 'index'])
+```
+
+```ts title="app/controllers/posts_controller.ts"
 import Post from '#models/post'
 import { HttpContext } from '@adonisjs/core/http'
 
@@ -134,7 +157,7 @@ AdonisJS provides starter kits for each approach that come with opinionated conf
 
 These starter kits include properly **configured build tools**, **authentication scaffolding**, and all the **necessary integrations set up correctly**. When you create a new AdonisJS application, you can choose which starter kit to use based on the approach you've decided on.
 
-This gives you a "flexible but not on your own" experience. You get to choose your stack, but once you've chosen, you get a fully configured setup that works out of the box.
+This gives you a **"flexible but not on your own"** experience. You get to choose your stack, but once you've chosen, you get a fully configured setup that works out of the box.
 
 - [Hypermedia starter kit](http://github.com/adonisjs/web-starter-kit)
 - [React starter kit](http://github.com/adonisjs/react-starter-kit)

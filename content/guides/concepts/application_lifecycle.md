@@ -16,7 +16,9 @@ The boot phase is the initial stage where AdonisJS prepares your application for
 
 This is when service providers register their bindings into the container and execute their `boot` methods. The framework itself is being configured and prepared, but your application isn't yet ready to handle requests or execute commands.
 
-![Boot phase flow chart](./boot_phase_flow_chart.png)
+:::media
+![Boot phase flow chart](./boot_phase.png)
+:::
 
 The boot phase completes before any preload files are imported or application-specific code runs. Think of it as the foundation-laying phase where the framework assembles all the pieces it needs.
 
@@ -26,7 +28,9 @@ The start phase is where your application comes to life. During this phase, Adon
 
 This is when your application-specific initialization happens. Routes are registered, event listeners are attached, custom validation rules are defined, and any other application setup code runs. By the end of this phase, your application is fully operational and ready to handle HTTP requests, execute Ace commands, or run tests depending on the environment.
 
-![Start phase flow chart](./start_phase_flow_chart.png)
+:::media
+![Start phase flow chart](./start_phase.png)
+:::
 
 The start phase is environment-aware, meaning you can configure different behavior for the HTTP server, Ace commands, or test environments. All preload files configured for the current environment are imported in parallel for optimal performance.
 
@@ -36,7 +40,9 @@ The termination phase happens when AdonisJS begins the graceful shutdown process
 
 During this phase, service providers execute their `shutdown` methods, allowing them to perform cleanup operations like closing database connections, flushing logs, or canceling pending background jobs.
 
-![Termination phase flow chart](./termination_phase_flow_chart.png)
+:::media
+![Termination phase flow chart](./termination_phase.png)
+:::
 
 The graceful shutdown ensures your application stops cleanly rather than abruptly terminating mid-operation, helping prevent data corruption and ensuring proper resource cleanup.
 
@@ -49,15 +55,16 @@ AdonisJS already includes preload files you use regularly. The `start/routes.ts`
 ### Creating a preload file
 
 You can create a custom preload file using the `make:preload` command:
-```bash
+
+```sh
 node ace make:preload events
 ```
 
 This command creates a new file in the `start` directory and automatically registers it in your `adonisrc.ts` configuration file.
 
 Here's an example preload file that registers an event listener:
-```ts
-// title: start/events.ts
+
+```ts title="start/events.ts"
 import emitter from '@adonisjs/core/services/emitter'
 
 emitter.on('user:registered', function (user) {
@@ -70,18 +77,17 @@ Preload files can be used for various tasks like adding custom validation rules,
 ### Environment-specific preload files
 
 You can configure preload files to load only in specific runtime environments by specifying the `environment` property in your `adonisrc.ts` file:
-```ts
-// title: adonisrc.ts
+
+```ts title="adonisrc.ts"
 {
   preloads: [
-    () => import('./start/routes.js'),
-    () => import('./start/kernel.js'),
-    // highlight-start
+    () => import('#start/routes'),
+    () => import('#start/kernel'),
+    // [!code highlight:3]
     {
-      file: () => import('./start/events.js'),
+      file: () => import('#start/events'),
       environment: ['web', 'console']
     }
-    // highlight-end
   ]
 }
 ```
