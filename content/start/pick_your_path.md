@@ -3,13 +3,13 @@
 This guide introduces AdonisJS's approach to frontend development and the three primary stacks you can choose from. You will learn:
 
 - Why AdonisJS is backend-first but frontend-flexible.
-- Understand the difference between Hypermedia, Inertia, and API-only approaches
+- Understand the difference between Hypermedia, Inertia, and API-only approaches.
 - See how the View layer works in each stack. 
 - Learn about the starter kits that provide opinionated setups for each approach.
 
 ## Overview
 
-AdonisJS is deeply opinionated about the backend—providing built-in authentication, authorization, validation, database tooling, and more—**but deliberately flexible about the frontend**. This backend-first philosophy means you get a robust foundation for building your server-side logic while choosing how you build your user interface.
+AdonisJS is deeply opinionated about the backend, providing built-in authentication, authorization, validation, database tooling, and more, **but deliberately flexible about the frontend**. This backend-first philosophy means you get a robust foundation for building your server-side logic while choosing how you build your user interface.
 
 You can create traditional server-rendered applications, modern single-page applications, or anything in between, all using the same backend framework. A marketing website has different requirements than an admin dashboard, which differs from a mobile app's API backend. Rather than forcing you into a single approach, AdonisJS lets you choose the frontend stack that fits your needs.
 
@@ -29,7 +29,7 @@ In a Hypermedia application:
 
 - The server is responsible for rendering your views.
 - Your controllers return HTML instead of JSON.
-- And navigation between pages happens through traditional page loads or progressively enhanced requests.
+- Navigation between pages happens through traditional page loads or progressively enhanced requests.
 
 This approach embraces the web's native capabilities and keeps most of your application's logic on the server where you have full control.
 
@@ -65,7 +65,7 @@ Choose this approach when you're building an API that serves multiple client app
 
 ## The same controller, three different returns
 
-In the following example, you can see us using the same route, same controller, same data fetching logic — only the return statement changes.
+In the following example, you can see us using the same route, same controller, same data fetching logic. Only the return statement changes.
 
 ::::tabs
 :::tab{title="Hypermedia"}

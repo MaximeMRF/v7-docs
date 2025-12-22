@@ -6,7 +6,8 @@
   "license": "UNLICENSED",
   "scripts": {
     "start": "node bin/server.js",
-    "build": "node ace build && node ace build:static",
+    "pagefind-search": "npx pagefind --site build/public",
+    "build": "node ace build && node ace build:static && npm run pagefind-search",
     "dev": "node ace serve --hmr",
     "test": "node ace test",
     "lint": "eslint .",

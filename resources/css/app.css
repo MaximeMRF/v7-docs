@@ -50,7 +50,7 @@
 }
 
 * {
-  scrollbar-width: auto;
+  scrollbar-width: thin;
   scrollbar-color: var(--color-woodsmoke-700) transparent;
 }
 
@@ -60,7 +60,8 @@
 }
 
 *::-webkit-scrollbar {
-  width: 16px;
+  width: 8px;
+  height: 6px;
 }
 
 *::-webkit-scrollbar-thumb {

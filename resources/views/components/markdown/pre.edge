@@ -3,11 +3,11 @@
     @let(parsed = parseCodeblockTitle(node.properties.title))
 
     <div class="code_snippet_header flex justify-between items-center">
-      <div class="flex items-center gap-1">
+      <div class="flex items-center gap-1 whitespace-nowrap text-ellipsis overflow-hidden grow-0">
         @if(parsed.icon)
           @svg(parsed.icon, { class: parsed.classes })
         @end
-        <span class="code_snippet_title whitespace-nowrap text-ellipsis overflow-hidden grow-0">
+        <span class="code_snippet_title">
           {{ parsed.title }}
         </span>
       </div>

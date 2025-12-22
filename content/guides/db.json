@@ -1,76 +1,66 @@
 [
   {
-    "category": "HTTP",
+    "category": "Basics",
     "children": [
       {
         "title": "Routing",
-        "permalink": "guides/http/routing",
-        "oldUrls": ["guides/basics/routing"],
-        "contentPath": "./http/routing.md"
+        "permalink": "guides/basics/routing",
+        "contentPath": "./basics/routing.md"
       },
       {
         "title": "Controllers",
-        "permalink": "guides/http/controllers",
-        "oldUrls": ["guides/basics/controllers"],
-        "contentPath": "./http/controllers.md"
+        "permalink": "guides/basics/controllers",
+        "contentPath": "./basics/controllers.md"
       },
       {
         "title": "Middleware",
-        "permalink": "guides/http/middleware",
-        "oldUrls": ["guides/basics/middleware"],
-        "contentPath": "./http/middleware.md"
+        "permalink": "guides/basics/middleware",
+        "contentPath": "./basics/middleware.md"
       },
       {
         "title": "Request",
-        "permalink": "guides/http/request",
-        "oldUrls": ["guides/basics/request"],
-        "contentPath": "./http/request.md"
+        "permalink": "guides/basics/request",
+        "contentPath": "./basics/request.md"
       },
       {
         "title": "Response",
-        "permalink": "guides/http/response",
-        "oldUrls": ["guides/basics/response"],
-        "contentPath": "./http/response.md"
+        "permalink": "guides/basics/response",
+        "contentPath": "./basics/response.md"
       },
       {
         "title": "Validation",
-        "permalink": "guides/http/validation",
-        "oldUrls": ["guides/basics/validation"],
-        "contentPath": "./http/validation.md"
+        "permalink": "guides/basics/validation",
+        "contentPath": "./basics/validation.md"
       },
       {
         "title": "File uploads",
-        "permalink": "guides/http/file-uploads",
-        "oldUrls": ["guides/basics/file-uploads"],
-        "contentPath": "./http/file_uploads.md"
+        "permalink": "guides/basics/file-uploads",
+        "contentPath": "./basics/file_uploads.md"
       },
       {
         "title": "Body parser",
-        "permalink": "guides/http/body-parser",
-        "contentPath": "./http/body_parser.md"
+        "permalink": "guides/basics/body-parser",
+        "contentPath": "./basics/body_parser.md"
       },
       {
         "title": "Session",
-        "permalink": "guides/http/session",
-        "oldUrls": ["guides/basics/session"],
-        "contentPath": "./http/session.md"
+        "permalink": "guides/basics/session",
+        "contentPath": "./basics/session.md"
       },
       {
         "title": "URL builder",
-        "permalink": "guides/http/url-builder",
-        "contentPath": "./http/url_builder.md"
+        "permalink": "guides/basics/url-builder",
+        "contentPath": "./basics/url_builder.md"
       },
       {
         "title": "Exception handling",
-        "permalink": "guides/http/exception-handling",
-        "oldUrls": ["guides/basics/exception-handling"],
-        "contentPath": "./http/exception_handling.md"
+        "permalink": "guides/basics/exception-handling",
+        "contentPath": "./basics/exception_handling.md"
       },
       {
         "title": "Static File Server",
-        "permalink": "guides/http/static-file-server",
-        "oldUrls": ["guides/basics/static-file-server"],
-        "contentPath": "./http/static_file_server.md"
+        "permalink": "guides/basics/static-file-server",
+        "contentPath": "./basics/static_file_server.md"
       }
     ]
   },

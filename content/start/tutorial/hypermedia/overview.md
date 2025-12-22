@@ -8,9 +8,17 @@ In this tutorial, you will build DevShow. **DevShow is a small community showcas
 
 ## Overview
 
-We're taking a hands-on approach in this tutorial by building a real application from start to finish. Instead of learning about features in isolation, you will see how everything in AdonisJS works together — **routing, controllers, models, validation, authentication, and templating all coming together to create a functioning web application**.
+We're taking a hands-on approach in this tutorial by building a real application from start to finish. Instead of learning about features in isolation, you will see how everything in AdonisJS works together: **routing, controllers, models, validation, authentication, and templating all coming together to create a functioning web application**.
 
-By the end, you will have built a deployable DevShow web-app and gained a solid understanding of how AdonisJS features work together in practice.
+By the end of this tutorial, you'll have built:
+
+- **Post listing and detail pages** - Display all posts and individual post details with comments
+- **Post creation and editing** - Forms to create and update posts with validation
+- **Comment system** - Allow users to comment on posts
+- **Authorization** - Ensure users can only edit/delete their own posts and comments
+- **Navigation and styling** - Polished UI with proper navigation between pages
+
+The authentication system (signup, login, logout) is already included in your starter kit and fully functional.
 
 ## Understanding the starter kit
 
@@ -90,6 +98,71 @@ export default class NewAccountController {
 }
 ```
 
-The `create` method simply shows the signup form. The `store` method does the heavy lifting—validating data, creating the user, logging them in, and redirecting home. **This pattern of bringing together validators, models, and auth is what you'll see throughout the tutorial**.
+Each controller method receives an HTTP context object as its first parameter. The context contains everything about the current request: the request data, response object, auth state, view renderer, and more. We destructure just the properties we need (`view` for rendering templates, `request` for form data, `response` for redirects, and `auth` for authentication).
 
-Before we move forward, start your development server with `node ace serve --hmr` and try creating an account. Get comfortable with how the starter kit works—we'll be building on this foundation.
+The `create` method simply shows the signup form. The `store` method does the heavy lifting. It validates data, creates the user, logs them in, and redirects home. **This pattern of bringing together validators, models, and auth is what you'll see throughout the tutorial**.
+
+You might notice the controller references a `User` model and a `signupValidator`. The starter kit already includes these. We'll explore how models work in Chapter 3 and validators in Chapter 5.
+
+### How views work
+
+When a controller calls `view.render('pages/auth/signup')`, AdonisJS looks for a template file and renders it as HTML. Let's see what that signup view looks like.
+
+```edge title="resources/views/pages/auth/signup.edge"
+@layout()
+  <div class="form-container">
+    <div>
+      <h1> Signup </h1>
+      <p>
+        Enter your details below to create your account
+      </p>
+    </div>
+
+    <div>
+      @form({ route: 'new_account.store', method: 'POST' })
+        <div>
+          @field.root({ name: 'fullName' })
+            @!field.label({ text: 'Full name' })
+            @!input.control()
+            @!field.error()
+          @end
+        </div>
+
+        <div>
+          @field.root({ name: 'email' })
+            @!field.label({ text: 'Email' })
+            @!input.control({ type: 'email', autocomplete: 'email' })
+            @!field.error()
+          @end
+        </div>
+
+        <div>
+          @field.root({ name: 'password' })
+            @!field.label({ text: 'Password' })
+            @!input.control({ type: 'password', autocomplete: 'new-password' })
+            @!field.error()
+          @end
+        </div>
+
+        <div>
+          @field.root({ name: 'passwordConfirmation' })
+            @!field.label({ text: 'Confirm password' })
+            @!input.control({ type: 'password', autocomplete: 'new-password' })
+            @!field.error()
+          @end
+        </div>
+
+        <div>
+          @!button({ text: 'Sign up', type: 'submit' })
+        </div>
+      @end
+    </div>
+  </div>
+@end
+```
+
+Views live in the `resources/views` directory. AdonisJS uses Edge as its templating engine. Edge templates look similar to HTML but with special tags that start with `@`. 
+
+The `@layout()` tag wraps the page content with a common layout (header, footer, CSS). The `@form()` and `@field.root()` tags are components that come with the starter kit. They render standard HTML form elements with built-in features like CSRF protection and validation error display.
+
+When you visit `/signup`, the route calls the controller's `create` method, which renders this view, and Edge converts it to HTML that your browser displays.

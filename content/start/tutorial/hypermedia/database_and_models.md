@@ -2,29 +2,29 @@
 
 In this chapter, you will create models and migrations for the Post and Comment resources, establish relationships between them, generate dummy data using factories and seeders, and query your data using the REPL.
 
-:::note
-This chapter introduces several database concepts at once.  Don't worry if you don't fully understand everything - the goal is to learn by doing and get something working. Deeper understanding will come with practice.
-:::
-
 ## Overview
 
-This chapter introduces [Lucid, AdonisJS's SQL ORM](https://lucid.adonisjs.com). Instead of writing raw SQL queries, you'll work with JavaScript classes called **models** that represent your database tables. Throughout this chapter and the rest of the tutorial, you'll interact with your database exclusively through models.
+This chapter introduces Lucid, AdonisJS's SQL ORM. Instead of writing raw SQL queries, you'll work with JavaScript classes called **models** that represent your database tables. Throughout this chapter and the rest of the tutorial, you'll interact with your database exclusively through models.
 
-**An important distinction**: models define how you interact with data, but they don't modify the database structure. That's the job of migrations, which create and alter tables. You'll use both as you build DevShow's database structure.
+An important distinction: models define how you interact with data, but they don't modify the database structure. That's the job of **migrations**, which create and alter tables. You'll use both as you build DevShow's database structure.
+
+:::note
+**A note on learning:** This chapter introduces several database concepts at once. Don't worry if you don't fully understand everything - the goal is to learn by doing and get something working. Deeper understanding will come with practice.
+:::
 
 ## Creating the Post model
 
-Our app needs posts, so let's create a Post model and its corresponding database migration. In AdonisJS, you create one model per database table.
+Our app needs posts, so let's create a Post model and its corresponding database migration. In AdonisJS, you create one model per database table. Lucid uses naming conventions to automatically connect models to their tables - a `Post` model maps to a `posts` table, a `User` model maps to a `users` table, and so on.
 
 ::::steps
 :::step{title="Generate the model and migration"}
 
-Run this command to create both the model and the migration together. The `-m` flag tells Ace to create a migration file alongside the model.
-
+Run this command to create both files at once.
 ```bash
 node ace make:model Post -m
 ```
 
+The `-m` flag tells Ace to create a migration file alongside the model. You'll see this output.
 ```bash
 DONE:    create app/models/post.ts
 DONE:    create database/migrations/1763866156451_create_posts_table.ts
@@ -52,16 +52,13 @@ export default class Post extends BaseModel {
 }
 ```
 
-- The model extends `BaseModel` and uses decorators to define columns. 
-- The `@column` decorator tells Lucid that a property maps to a database column. 
-
-Also, notice it already includes `id`, `createdAt`, and `updatedAt` - these are common for most models and come pre-configured.
+The model extends `BaseModel` and uses decorators to define columns. The `@column` decorator tells Lucid that a property maps to a database column. Notice it already includes `id`, `createdAt`, and `updatedAt` - these are common for most models and come pre-configured.
 
 :::
 
 :::step{title="Add fields to the Post model"}
 
-Now let's add the `title`, `url` and `summary` columns our posts need. Make sure to use the `@column` decorator as it's needed to map a model property to a database column.
+Now let's add the `title`, `url` and `summary` columns our posts need.
 
 ```ts title="app/models/post.ts"
 import { DateTime } from 'luxon'
@@ -93,7 +90,7 @@ export default class Post extends BaseModel {
 
 :::step{title="Define the table structure in the migration"}
 
-Since, models do not modify the database schema. We must use the migration file to create the `posts` table.
+Now let's update the migration file to define the database table structure.
 
 ```ts title="database/migrations/1763866156451_create_posts_table.ts"
 import { BaseSchema } from '@adonisjs/lucid/schema'
@@ -136,12 +133,12 @@ Let's create the Comment model following the same process we used for posts.
 ::::steps
 :::step{title="Generate the model and migration"}
 
-One more time, we will create the model and the migration together.
-
+Run this command.
 ```bash
 node ace make:model Comment -m
 ```
 
+You'll see output showing the created files.
 ```bash
 DONE:    create app/models/comment.ts
 DONE:    create database/migrations/1763866347711_create_comments_table.ts
@@ -177,7 +174,7 @@ export default class Comment extends BaseModel {
 
 :::step{title="Define the table structure in the migration"}
 
-Now update the migration to create the comments table with the content column.
+Now update the migration to create the comments table with a content column.
 
 ```ts title="database/migrations/1763866347711_create_comments_table.ts"
 import { BaseSchema } from '@adonisjs/lucid/schema'
@@ -206,14 +203,12 @@ export default class extends BaseSchema {
 
 ## Running migrations
 
-Now that we have both the migrations in place, we can go ahead and create the actual database tables by executing these migration. Run the following command for the that.
-
+Now let's create these tables in your database by running the migrations.
 ```bash
 node ace migration:run
 ```
 
 You'll see output showing which migrations were executed.
-
 ```bash
 ❯ migrated database/migrations/1763866156451_create_posts_table
 ❯ migrated database/migrations/1763866347711_create_comments_table
@@ -311,8 +306,6 @@ node ace migration:run
 
 Now that the database has the foreign key columns, let's update our models to define these relationships.
 
-Lucid supports all standard relationships like **One to one**, **One to many**, and **Many to many** and provide several helper methods to read and persist related data.
-
 ```ts title="app/models/post.ts"
 import { DateTime } from 'luxon'
 // [!code ++:4]
@@ -359,14 +352,11 @@ export default class Post extends BaseModel {
 }
 ```
 
-- The `@hasMany` decorator defines a one-to-many relationship between post and comments. 
-- The `@belongsTo` decorator defines a one-to-one relationship between a post and a user.
+The `@hasMany` decorator defines a one-to-many relationship - one post has many comments. The `@belongsTo` decorator defines the inverse - a post belongs to one user.
 
 :::
 
 :::step{title="Define relationships in the Comment model"}
-
-A comment has a one-to-one relationship with both the post and the user. Therefore, we will define those relationships using the `@belongsTo` decorator.
 
 ```ts title="app/models/comment.ts"
 import { DateTime } from 'luxon'
@@ -414,7 +404,7 @@ export default class Comment extends BaseModel {
 :::
 ::::
 
-Perfect! Our models now understand their relationships. When you load a post, you can easily access its comments through `post.comments`, and when you load a comment, you can access its post through `comment.post` and its user through `comment.user`.
+Perfect! Our models now understand their relationships. When you load a post, you can easily access its comments through `post.comments`, and when you load a comment, you can access its post through `comment.post` or its user through `comment.user`.
 
 ## Creating factories
 
@@ -425,14 +415,14 @@ AdonisJS factories use a library called [Faker](https://fakerjs.dev/) to generat
 ::::steps
 :::step{title="Create the Post factory"}
 
-Run the following command to create a new factory file where we'll define how to generate dummy Post data.
-
 ```bash
 node ace make:factory Post
 ```
 ```bash
 DONE:    create database/factories/post_factory.ts
 ```
+
+This creates a factory file where we'll define how to generate dummy Post data.
 
 :::
 
@@ -466,7 +456,6 @@ export const PostFactory = factory
   .build()
 ```
 
-- The callback provided to the `factory.define` method is executed everytime we ask the factory to create a new post for us.
 - The `faker.helpers.arrayElement()` picks a random title from the array.
 - The `faker.internet.url()` generates a realistic URL.
 - The `faker.lorem.paragraphs(3)` creates three paragraphs of placeholder text.
@@ -488,8 +477,7 @@ DONE:    create database/factories/comment_factory.ts
 
 :::step{title="Define the Comment factory data"}
 
-The Comment factory is simpler - it only needs to generate the `content` field using `faker.lorem.paragraph()`, which creates a single paragraph of text.
-
+Open the Comment factory and add the data generation logic.
 ```ts title="database/factories/comment_factory.ts"
 import factory from '@adonisjs/lucid/factories'
 import Comment from '#models/comment'
@@ -503,14 +491,14 @@ export const CommentFactory = factory
   .build()
 ```
 
+The Comment factory is simpler. It only needs to generate the `content` field using `faker.lorem.paragraph()`, which creates a single paragraph of text. We'll handle the `userId` and `postId` relationships in the seeder.
+
 :::
 ::::
 
 ## Creating seeders
 
-Factories define HOW to create fake data, but they don't actually create it automatically. That's where seeders come in - they're scripts that use factories to populate your database with actual data. 
-
-Every time you reset your database or a teammate clones the project, running `node ace db:seed` populates the database with consistent, realistic data.
+Factories define HOW to create fake data, but they don't actually create it automatically. That's where seeders come in - they're scripts that use factories to populate your database with actual data. Every time you reset your database or a teammate clones the project, running `node ace db:seed` populates the database with consistent, realistic data.
 
 ::::steps
 :::step{title="Create the seeder"}
@@ -540,22 +528,12 @@ import { CommentFactory } from '#database/factories/comment_factory'
 export default class extends BaseSeeder {
   async run() {
     const user = await User.findByOrFail('email', 'jane@example.com')
+    const posts = await PostFactory.merge({ userId: user.id }).createMany(10)
 
-    /**
-     * Creating 10 posts using the PostFactory
-     */
-    const posts = await PostFactory
-      .merge({ userId: user.id })
-      .createMany(10)
-
-    /**
-     * Looping over every post to create between 3-5 dummy
-     * comments
-     */
     for (const post of posts) {
-      await CommentFactory
-        .merge({ postId: post.id, userId: user.id })
-        .createMany(Math.floor(Math.random() * 3) + 3)
+      await CommentFactory.merge({ postId: post.id, userId: user.id }).createMany(
+        Math.floor(Math.random() * 3) + 3
+      )
     }
   }
 }
@@ -565,7 +543,7 @@ Let's break down what this seeder does:
 
 First, we fetch the user with email `jane@example.com`. This is the user we created in the previous chapter when exploring the CLI and REPL. If you followed along, this user should exist in your database. The `findByOrFail` method will throw an error if the user doesn't exist.
 
-Next, we use the `PostFactory` to create 10 posts. The `merge()` method is important here - it merges additional data with the factory's generated values. We need this to set the `userId` foreign key on each post. Without it, the foreign key constraint would fail because `userId` would be undefined.
+Next, we use `PostFactory.merge({ userId: user.id }).createMany(10)` to create 10 posts. The `merge()` method is important here - it merges additional data with the factory's generated values. We need this to set the `userId` foreign key on each post. Without it, the foreign key constraint would fail because `userId` would be undefined.
 
 Then, for each post, we create between 3 to 5 comments using a similar approach. The formula `Math.floor(Math.random() * 3) + 3` generates a random number between 3 and 5.
 
@@ -587,17 +565,19 @@ Your database now has 10 posts, each with several comments!
 :::
 ::::
 
-## A quick recap
+## Understanding the tools we've used
 
 Before we move on to querying data, let's take a moment to understand what we've built. AdonisJS provides dedicated tools for working with databases, and each one has a specific purpose.
 
 **Migrations** define your database structure. They create tables, add columns, and establish constraints. Think of them as instructions that transform your database schema. When you run `node ace migration:run`, these instructions execute and modify your database structure.
 
-**Models** are your JavaScript interface to database tables. They provide a clean, type-safe API for querying and manipulating data without writing raw SQL. Models also define relationships between tables - like how posts relate to comments - making it easy to work with connected data.
+**Models** are your JavaScript interface to database tables. They provide a clean, type-safe API for querying and manipulating data without writing raw SQL. Models also define relationships between tables (like how posts relate to comments), making it easy to work with connected data.
 
 **Factories** generate realistic dummy data for your models. Instead of manually creating test data over and over, you define a blueprint once, and the factory creates as many realistic instances as you need. This is invaluable during development and testing.
 
 **Seeders** are scripts that populate your database with data. They typically use factories to generate data, but can also create specific records or import data from other sources. Running `node ace db:seed` executes all your seeders and gives you a consistent database state.
+
+These tools work together: migrations shape the database, models interact with it, factories generate data, and seeders populate it. Each tool is focused on its specific job, making your database workflow organized and maintainable.
 
 ## Querying data with the REPL
 
@@ -605,30 +585,26 @@ Now that we have data in our database, let's explore it using AdonisJS's REPL (R
 
 ### Start the REPL and load models
 
-First, start the REPL:
+First, start the REPL.
 ```bash
 node ace repl
 ```
 
-Once the REPL starts, load all your models. This makes all your models available under the `models` object.
-
+Once the REPL starts, load all your models.
 ```ts
 await loadModels()
-
-// models.post
-// models.comment
 ```
+
+This makes all your models available under the `models` object.
 
 ### Fetch all posts
 
 Let's fetch all posts from the database.
-
 ```ts
 await models.post.all()
 ```
 
-You'll see an array of all 10 posts with their data. Each post is a Post model instance, not a plain JavaScript object.
-
+You'll see an array of all 10 posts with their data.
 ```ts
 [
   Post {
@@ -644,6 +620,8 @@ You'll see an array of all 10 posts with their data. Each post is a Post model i
 ]
 ```
 
+Each post is a Post model instance, not a plain JavaScript object.
+
 ### Search posts by title
 
 Let's search for posts containing "Task Management" in the title using the `query()` method.
@@ -657,32 +635,30 @@ The `query()` method returns a chainable query builder built on top of Knex, giv
 ### Fetch a post and load its comments
 
 Now let's demonstrate how to work with relationships. First, fetch a specific post by its ID.
-
 ```ts
 const post = await models.post.find(1)
 ```
 
-The post is loaded, but its comments aren't loaded yet - relationships are lazy-loaded by default. To load the comments relationship, you must use the `load` method.
-
+The post is loaded, but its comments aren't loaded yet (relationships are lazy-loaded by default). Use the `load` method to load the comments relationship.
 ```ts
 await post.load('comments')
 ```
 
-Once the comments have been loaded, they will be set as a property on the `post` instance and you can access them as follows.
-
+Now you can access the comments.
 ```ts
 post.comments
 ```
 
-### Load comments alongside the post
+You'll see all the comments that belong to this post.
 
-Instead of loading comments after fetching the post, you can fetch them together using the `preload` method on the query builder. 
+### Load relationships efficiently with preload
 
+You can also load relationships when initially fetching the post.
 ```ts
 const postWithComments = await models.post.query().preload('comments').first()
 ```
 
-This fetches the first post and its comments in a single operation. The `preload` method is more efficient than loading relationships separately because it avoids the N+1 query problem - instead of making one query for the post and then one query per comment, it makes just two queries total.
+This fetches the first post and its comments in a single operation. The `preload` method is more efficient than loading relationships separately because it avoids the N+1 query problem. Instead of making one query for the post and then one query per comment, it makes just two queries total.
 
 ### Exit the REPL
 

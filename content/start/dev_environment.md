@@ -134,10 +134,9 @@ The compiled output includes:
 
 - Transpiled JavaScript files with decorators transformed
 - Copied static assets and templates
-- Optimized module imports
-- Removed development-only code
+- The `package.json` and your package manager lock file. You must `cd` into the build directory, install dependencies and start the production server.
 
-See also: [Deploying to production](./deploying-to-production.md), [TypeScript build process](../concepts/typescript_build_process.md)
+See also: [Deploying to production](./deploying-to-production.md)
 
 ## ESLint and Prettier Configuration
 
@@ -185,7 +184,7 @@ See also: [ESLint configuration reference](https://github.com/adonisjs/tooling-c
 
 AdonisJS applications are pre-configured with **SQLite**, a lightweight file-based database. SQLite requires no installation and stores data in a local `tmp/database.sqlite` file, allowing you to start building immediately without setting up external database servers.
 
-However, most applications use PostgreSQL or MySQL in production. We recommend switching to your production database engine early in development to avoid schema differences and driver-specific behavior that can cause deployment issues.
+However, most applications use PostgreSQL or MySQL in production. We recommend [switching to your production database]() engine early in development to avoid schema differences and driver-specific behavior that can cause deployment issues.
 
 ### Local database tools
 

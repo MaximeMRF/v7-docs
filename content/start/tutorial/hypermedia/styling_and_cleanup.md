@@ -58,6 +58,20 @@ Open your CSS file and add the following styles at the end.
   line-height: 1;
 }
 
+.post-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 40px;
+  padding: 5px 0;
+  align-items: center;
+  border-bottom: 1px solid var(--gray-4);
+}
+.post-actions button {
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+
 .post {
   min-width: 680px;
   max-width: 800px;
@@ -66,7 +80,6 @@ Open your CSS file and add the following styles at the end.
 
 .post-summary {
   padding: 15px 0;
-  margin: 20px 0 40px 0;
   border-bottom: 1px solid var(--gray-4);
 }
 
@@ -83,6 +96,15 @@ Open your CSS file and add the following styles at the end.
 .comment-item {
   padding: 18px 0;
   border-bottom: 1px solid var(--gray-4);
+}
+
+.comment-actions {
+  display: flex;
+}
+.comment-actions button {
+  padding: 0;
+  background: none;
+  cursor: pointer;
 }
 
 .comment-meta {
@@ -128,7 +150,7 @@ Replace the entire content of your homepage with this:
 @end
 ```
 
-The `@!link()` component generates links using route names instead of hardcoded URLs. The `route` parameter uses named routes — AdonisJS automatically names routes when you use controllers. The `class: 'button'` applies styling from the starter kit's CSS.
+[In Chapter 4](./routes_controllers_and_views.md#using-named-routes), we learned about named routes and used the `urlFor()` helper to generate URLs in our templates. This time, we use the `@!link()` component which accepts the route name as the `route` parameter. The `class: 'button'` applies styling from the starter kit's CSS.
 
 Visit the homepage at [`/`](http://localhost:3333) and you'll see the new landing page with a clear call-to-action button that takes users to the posts listing.
 
@@ -143,8 +165,12 @@ Update your posts index template to add the button in the header.
   <div class="container">
     <div class="posts-list-title">
       <h1> Posts </h1>
-      // [!code ++]
-      @!link({ text: 'Create new post', route: 'posts.create', class: 'button' })
+      // [!code ++:4]
+      @!link({
+        text: 'Create new post',
+        route: 'posts.create',
+        class: 'button'
+      })
     </div>
 
     @each(post in posts)
@@ -174,7 +200,7 @@ Update your posts create template.
         text: '&lsaquo; Go back to posts listing'
       })
       <h1>
-        Create a new post
+        Share your creation
       </h1>
       <p>
         Share the URL and a short summary of your creation
@@ -201,14 +227,16 @@ Update your posts show template.
 ```edge title="resources/views/posts/show.edge"
 @layout()
   <div class="container">
-    // [!code ++:4]
-    @!link({
-      route: 'posts.index',
-      text: '&lsaquo; Go back to posts listing'
-    })
-    <h1>
-      {{ post.title }}
-    </h1>
+    <div>
+      // [!code ++:4]
+      @!link({
+        route: 'posts.index',
+        text: '&lsaquo; Go back to posts listing'
+      })
+      <h1>
+        {{ post.title }}
+      </h1>
+    </div>
 
     <div class="post">
       {{-- ... post details ... --}}

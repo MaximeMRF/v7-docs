@@ -19,7 +19,7 @@ export const sponsors = Collection.create({
       sponsorLogin: vine.string(),
       sponsorAvatarUrl: vine.string().url(),
       privacyLevel: vine.string(),
-      isActive: vine.boolean(),
+      isActive: vine.boolean().optional(),
     })
   ),
   views: {

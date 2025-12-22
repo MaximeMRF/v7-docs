@@ -41,7 +41,7 @@ First, start the REPL:
 node ace repl
 ```
 
-Once the REPL starts, load all your models using the following helper method. This will make all your models available under the `models` namespace.
+Once the REPL starts, load all your models using the `loadModels()` helper. The REPL provides several built-in helper functions like this to make experimentation easier. This helper will make all your models available under the `models` namespace.
 
 ```ts
 await loadModels()
@@ -52,7 +52,7 @@ models.user
 
 ### Create users
 
-Let's use the `User` model to create a couple of users that we can use to log into our app later. The `create` method accepts the model properties as an object, persists them to the database and returns a model instance.
+Let's use the `User` model (stored within the `app/models/user.ts` file) to create a couple of users that we can use to log into our app later. The `create` method accepts the model properties as an object, persists them to the database and returns a model instance.
 
 ```ts
 await models.user.create({ fullName: 'Harminder Virk', email: 'virk@adonisjs.com', password: 'secret' })
@@ -103,12 +103,3 @@ await models.user.all()
 ### Exit the REPL
 
 When you're done exploring, type `.exit` or press `Ctrl+D` to leave the REPL and return to your terminal.
-
-## What you learned
-
-You now know how to:
-- View all available Ace commands using `node ace list`
-- Get help for specific commands with the `--help` flag
-- Start an interactive REPL session with `node ace repl`
-- Use the `loadModels()` helper to access your models
-- Create, query, and delete records using the REPL

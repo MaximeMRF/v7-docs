@@ -2,6 +2,11 @@
 
 In this chapter, you'll first add the ability for authenticated users to create new posts. Then, you'll apply the same pattern to let users leave comments on existing posts. Along the way, you'll be introduced to AdonisJS's validation layer and learn how to organize your code using separate controllers for different resources.
 
+:::note
+This tutorial covers basic form handling and validation. For advanced topics like custom validation rules, conditional validation, error message customization, and file uploads, see the [Validation guide](../../../guides/basics/validation.md) and [VineJS documentation](https://vinejs.dev).
+:::
+
+
 ## Overview
 So far in the DevShow tutorial, you've built an application that displays posts from your database. But what about creating new posts? That's where forms come in.
 
@@ -51,6 +56,11 @@ export default class PostsController {
 :::step{title="Register the routes"}
 
 Now let's wire up the routes. We need two: one to display the form and another to handle submissions. Both should only be accessible to logged-in users.
+
+:::warning
+The `/posts/create` route must be defined before the `/posts/:id` route.
+:::
+
 ```ts title="start/routes.ts"
 import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
@@ -84,8 +94,11 @@ This creates `resources/views/posts/create.edge`. Open it and add the following 
   <div class="form-container">
     <div>
       <h1>
-        Create a new post
+        Share your creation
       </h1>
+      <p>
+        Share the URL and a short summary of your creation
+      </p>
     </div>
 
     <div>
@@ -93,7 +106,7 @@ This creates `resources/views/posts/create.edge`. Open it and add the following 
         <div>
           @field.root({ name: 'title' })
             @!field.label({ text: 'Post title' })
-            @!input.control({ placeholder: 'Enter an interesting title' })
+            @!input.control({ placeholder: 'Title of your creation' })
             @!field.error()
           @end
         </div>
@@ -101,7 +114,7 @@ This creates `resources/views/posts/create.edge`. Open it and add the following 
         <div>
           @field.root({ name: 'url' })
             @!field.label({ text: 'URL' })
-            @!input.control({ type: 'url', placeholder: 'https://example.com/article' })
+            @!input.control({ type: 'url', placeholder: 'https://example.com/my-creation' })
             @!field.error()
           @end
         </div>
@@ -109,13 +122,13 @@ This creates `resources/views/posts/create.edge`. Open it and add the following 
         <div>
           @field.root({ name: 'summary' })
             @!field.label({ text: 'Short summary' })
-            @!textarea.control({ rows: 4, placeholder: 'Describe what this post is about' })
+            @!textarea.control({ rows: 4, placeholder: 'Briefly describe what you are sharing' })
             @!field.error()
           @end
         </div>
         
         <div>
-          @!button({ text: 'Create Post', type: 'submit' })
+          @!button({ text: 'Publish', type: 'submit' })
         </div>
       @end
     </div>
@@ -129,7 +142,7 @@ These Edge form components are part of the starter kit. They render standard HTM
 
 :::step{title="Create a validator"}
 
-Before handling form submissions, we need to define validation rules. AdonisJS uses [VineJS for validation](https://vinejs.dev) — a schema-based validation library that lets you define rules for your data. 
+Before handling form submissions, we need to define validation rules. AdonisJS uses [VineJS for validation](https://vinejs.dev), a schema-based validation library that lets you define rules for your data. 
 
 Create a validator using the Ace CLI.
 
@@ -138,22 +151,21 @@ node ace make:validator post
 ```
 
 This creates `app/validators/post.ts`. Add a `createPostValidator` to validate post creation.
+
 ```ts title="app/validators/post.ts"
 import vine from '@vinejs/vine'
 
 /**
  * Validates the post's creation form
  */
-export const createPostValidator = vine.compile(
-  vine.object({
-    title: vine.string().minLength(3).maxLength(255),
-    url: vine.string().url(),
-    summary: vine.string().minLength(80).maxLength(500),
-  })
-)
+export const createPostValidator = vine.create({
+  title: vine.string().minLength(3).maxLength(255),
+  url: vine.string().url(),
+  summary: vine.string().minLength(80).maxLength(500),
+})
 ```
 
-The `vine.compile()` creates a reusable validator from a schema. Inside, we define each field with its type and rules.
+The `vine.create()` method creates a pre-compiled validator from a schema. Inside, we define each field with its type and rules.
 
 - The `title` field must be string between 3-255 characters.
 - The `url` field must be a string and formatted as a URL.
@@ -188,7 +200,9 @@ export default class PostsController {
 }
 ```
 
-When the form is submitted, `request.validateUsing()` validates the data. If validation fails, the user is automatically redirected back with errors that appear next to the relevant fields. If validation succeeds, we create the post and redirect to the posts index.
+- When the form is submitted, `request.validateUsing()` validates the data.
+- If validation fails, the user is automatically redirected back with errors that appear next to the relevant fields.
+- If validation succeeds, we create the post and associate it with the logged-in user using `auth.user.id` (available via the HTTP context), then redirect to the posts index.
 
 Now visit [`/posts/create`](http://localhost:3333/posts/create), fill out the form, and submit it. Your new post should appear on the posts page! Try submitting invalid data (like a short summary or invalid URL) to see the validation errors in action.
 
@@ -198,7 +212,7 @@ Now visit [`/posts/create`](http://localhost:3333/posts/create), fill out the fo
 
 ## Adding comments to posts
 
-Now that you can create posts, let's add the ability for users to leave comments. We'll create a separate controller for comments—having one controller per resource is the recommended approach in AdonisJS.
+Now that you can create posts, let's add the ability for users to leave comments. We'll create a separate controller for comments. Having one controller per resource is the recommended approach in AdonisJS.
 
 ::::steps
 
@@ -217,11 +231,9 @@ import vine from '@vinejs/vine'
 /**
  * Validates the comment's creation form
  */
-export const createCommentValidator = vine.compile(
-  vine.object({
-    content: vine.string().trim().minLength(1),
-  })
-)
+export const createCommentValidator = vine.create({
+  content: vine.string().trim().minLength(1),
+})
 ```
 
 :::
@@ -262,7 +274,7 @@ export default class CommentsController {
 }
 ```
 
-We're using `params.id` to get the post ID from the route parameter, and `response.redirect().back()` to send the user back to the post page.
+We're using `params.id` to get the post ID from the route parameter and use it to associate the comment with the post via `postId`. The `response.redirect().back()` sends the user back to the post page.
 
 :::
 
@@ -284,8 +296,6 @@ router.get('/posts/:id', [controllers.Posts, 'show'])
 router.post('/posts/:id/comments', [controllers.Comments, 'store']).use(middleware.auth())
 ```
 
-The `:id` parameter captures the post ID, which we access as `params.id` in the controller.
-
 :::
 
 :::step{title="Add the comment form"}
@@ -295,10 +305,10 @@ Open your `resources/views/posts/show.edge` template and add the comment form.
 @layout()
   {{-- ... existing post display code ... --}}
 
-    <div class="posts-comments">
+    <div class="post-comments">
       <h2>Comments</h2>
 
-      // [!code ++:13]
+      // [!code ++:14]
       <div class="post-comment-form">
         @form({ route: 'comments.store', routeParams: post, method: 'POST' })
           <div>
@@ -319,7 +329,7 @@ Open your `resources/views/posts/show.edge` template and add the comment form.
 @end
 ```
 
-The `routeParams: post` passes the post object to the route helper, generating the correct URL like `/posts/1/comments`.
+The `routeParams: post` passes the post object to the route helper, which extracts `post.id` to generate the correct URL like `/posts/1/comments`.
 
 Now visit any post page while logged in and try leaving a comment. After submitting, you'll be redirected back to see your comment in the list.
 

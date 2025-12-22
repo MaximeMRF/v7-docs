@@ -21,13 +21,13 @@ AdonisJS provides the structure, consistency, and tooling expected from a full-f
 
 It is suitable for teams that value:
 
-- **Ownership of backend logic** — Build critical features in-house rather than depending on external services for authentication, payments, or file handling.
+- **Ownership of backend logic**: Build critical features in-house rather than depending on external services for authentication, rate-limiting, or background jobs.
 
-- **Cohesive developer experience** — Every AdonisJS application follows the same conventions and directory structure, making it easy to onboard new developers and share knowledge across teams.
+- **Cohesive developer experience**: Every AdonisJS application follows the same conventions and directory structure, making it easy to onboard new developers and share knowledge across teams.
 
-- **Unified ecosystem** — Core features are maintained together under consistent quality standards, eliminating dependency fragmentation.
+- **Unified ecosystem**: Core features are maintained together under consistent quality standards, eliminating dependency fragmentation.
 
-- **Extensibility and freedom** — Core features are built from low-level packages that you can use directly to create custom flows, integrations, or abstractions.
+- **Extensibility and freedom**: Core features are built from low-level packages that you can use directly to create custom flows, integrations, or abstractions.
 
 AdonisJS is designed to provide everything you need for real-world backend applications, while remaining approachable and easy to configure.
 
@@ -35,11 +35,11 @@ AdonisJS is designed to provide everything you need for real-world backend appli
 
 AdonisJS is designed for real-world backend applications:
 
-- **REST APIs** — Build type-safe APIs for mobile apps or SPAs. Companies use AdonisJS to power APIs serving millions of requests.
+- **REST APIs**: Build type-safe APIs for mobile apps or SPAs. Companies use AdonisJS to power APIs serving millions of requests.
 
-- **Full-stack web applications** — Use Edge templates for server-rendered pages, or pair with Vue/React for hybrid applications. The MVC structure keeps your backend organized as your app grows.
+- **Full-stack web applications**: Use Edge templates for server-rendered pages, or pair with Vue/React for hybrid applications. The MVC structure keeps your backend organized as your app grows.
 
-- **SaaS platforms** — Build multi-tenant applications without relying on third-party services for core functionality like authentication, authorization, or background jobs.
+- **SaaS platforms**: Build multi-tenant applications without relying on third-party services for core functionality like authentication, authorization, or background jobs.
 
 Whether you're building a startup MVP or a production system serving thousands of users, AdonisJS provides the foundation without getting in your way.
 
@@ -55,11 +55,11 @@ AdonisJS APIs are functional and modern. You can use class-based components wher
 
 ## How AdonisJS compares
 
-**vs. Express/Fastify** — AdonisJS provides structure and conventions that Express lacks, while remaining just as performant. Instead of assembling packages yourself, you get an integrated toolkit out of the box.
+**vs. Express/Fastify**: AdonisJS provides structure and conventions that Express lacks, while remaining just as performant. Instead of assembling packages yourself, you get an integrated toolkit out of the box.
 
-**vs. NestJS** — AdonisJS focuses on practical patterns over enterprise abstractions. No decorators everywhere, no dependency injection containers to configure—just straightforward TypeScript code that follows clear conventions.
+**vs. NestJS**: AdonisJS focuses on practical patterns over enterprise abstractions. No decorators everywhere, no dependency injection containers to configure, just straightforward TypeScript code that follows clear conventions.
 
-**vs. Laravel/Rails** — If you love Laravel or Rails but work in Node.js, AdonisJS brings that same cohesive experience: migrations, seeders, factories, model relationships, and consistent conventions.
+**vs. Laravel/Rails**: If you love Laravel or Rails but work in Node.js, AdonisJS brings that same cohesive experience: migrations, seeders, factories, model relationships, and consistent conventions.
 
 Choose AdonisJS when you want the productivity of a full-featured framework without the complexity of enterprise patterns or the fragmentation of minimal frameworks.
 
@@ -79,7 +79,7 @@ Most backend code, such as routing, controllers, models, and middleware, stays t
 
 AdonisJS has been in active development since 2015, with version 7 representing years of real-world usage and refinement. The framework is maintained by its creator full-time, with support from the core team members and an active community.
 
-The ecosystem includes official packages for common backend needs—all maintained by the core team with the same quality standards. Community packages extend functionality for specific needs like payment processing, cloud storage, and third-party integrations.
+The ecosystem includes official packages for common backend needs, all maintained by the core team with the same quality standards. Community packages extend functionality for specific needs like payment processing, cloud storage, and third-party integrations.
 
 All documentation, tooling, and packages follow semantic versioning, ensuring stable upgrades and long-term maintainability.
 
@@ -89,4 +89,4 @@ AdonisJS documentation is organized to guide both new and experienced developers
 
 - If this is your **first time** using AdonisJS, then continue reading all the docs in the **Start** section and eventually build an app by following the [Tutorial](./tutorial/hypermedia/overview.md).
 
-- If you already know the basics, explore the [Guides](../guides/http/routing.md) to learn specific topics like validation, database management, or testing.
+- If you already know the basics, explore the [Guides](../guides/basics/routing.md) to learn specific topics like validation, database management, or testing.

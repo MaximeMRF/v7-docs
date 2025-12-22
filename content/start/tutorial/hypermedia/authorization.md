@@ -1,28 +1,22 @@
 # Authorization
 
-In the previous chapter, we improved DevShow's navigation and styling. Now let's add the ability for users to edit and delete their own posts and comments. Right now, any logged-in user could modify anyone's content if we added those features—we need to add authorization checks to prevent this.
+In the previous chapter, we improved DevShow's navigation and styling. Now let's add the ability for users to edit and delete their own posts and comments. Right now, any logged-in user could modify anyone's content if we added those features. We need to add authorization checks to prevent this.
 
 ## Overview
 
-To handle permissions properly, we'll use AdonisJS's Bouncer package. Bouncer lets you organize authorization logic into **policies**—classes where each method represents a permission check. For example, a `PostPolicy` can have an `edit` method that checks if a user can edit a specific post.
+To handle permissions properly, we'll use [AdonisJS's Bouncer package](../../../guides/auth/authorization.md). Bouncer lets you organize authorization logic into **policies** (classes where each method represents a permission check). For example, a `PostPolicy` can have an `edit` method that checks if a user can edit a specific post.
 
 Instead of scattering permission checks throughout your controllers, you define the rules once in a policy and use them everywhere. In this chapter, we'll install Bouncer, create policies for posts and comments, and implement edit and delete features with proper authorization.
 
 ## Installing Bouncer
 
-Let's install the Bouncer package:
+Let's install and configure the Bouncer package using the following command.
 
 ```bash
-npm install @adonisjs/bouncer
+node ace add @adonisjs/bouncer
 ```
 
-Now configure it:
-
-```bash
-node ace configure @adonisjs/bouncer
-```
-
-This configuration command does a few things for you:
+Running this command will first install the package and then performs the following actions.
 
 - Creates an `app/abilities/main.ts` file where you can define authorization abilities (we won't need this file for now, so don't worry about it)
 - Registers a middleware that initializes Bouncer for every HTTP request
@@ -32,7 +26,7 @@ You're all set! Now let's create our first policy.
 
 ## Creating the PostPolicy
 
-Policies are classes where each method represents a permission check. Let's create a policy for posts:
+Policies are classes where each method represents a permission check. Let's create a policy for posts.
 
 ```bash
 node ace make:policy post
@@ -41,8 +35,8 @@ node ace make:policy post
 Open the generated file and add permission checks for editing and deleting posts.
 
 ```ts title="app/policies/post_policy.ts"
-import User from '#models/user'
-import Post from '#models/post'
+import type User from '#models/user'
+import type Post from '#models/post'
 import { BasePolicy } from '@adonisjs/bouncer'
 
 export default class PostPolicy extends BasePolicy {
@@ -68,7 +62,7 @@ You might notice that `edit` and `delete` have identical logic right now. Even t
 
 ## Creating the CommentPolicy
 
-Now create a policy for comments:
+Now create a policy for comments.
 
 ```bash
 node ace make:policy comment
@@ -77,8 +71,8 @@ node ace make:policy comment
 Add the delete permission check.
 
 ```ts title="app/policies/comment_policy.ts"
-import User from '#models/user'
-import Comment from '#models/comment'
+import type User from '#models/user'
+import type Comment from '#models/comment'
 import { BasePolicy } from '@adonisjs/bouncer'
 
 export default class CommentPolicy extends BasePolicy {
@@ -98,7 +92,7 @@ Perfect! Now let's put these policies to work.
 ::::steps
 :::step{title="Create the update validator"}
 
-We'll add a validator for updating posts. Since we already have a `validators/post.ts` file for creating posts, we'll add the update validator there too. A single validator file can export multiple validators—this keeps related validation logic organized together.
+We'll add a validator for updating posts. Since we already have a `validators/post.ts` file for creating posts, we'll add the update validator there too. A single validator file can export multiple validators (this keeps related validation logic organized together).
 
 Open your existing post validator file and add the update validator.
 
@@ -113,20 +107,16 @@ export const createPostValidator = vine.compile(
   })
 )
 
-// [!code ++:11]
+// [!code ++:6]
 /**
  * Same validation rules as creating a post
  */
-export const updatePostValidator = vine.compile(
-  vine.object({
-    title: vine.string().minLength(3).maxLength(255),
-    url: vine.string().url(),
-    summary: vine.string().minLength(80).maxLength(500),
-  })
+export const updatePostValidator = vine.create(
+  createPostValidator.schema.clone()
 )
 ```
 
-We're using the same validation rules for both creating and updating posts. In many applications, you might want different rules—for example, allowing updates without certain required fields—but for DevShow, the requirements are the same.
+We're cloning the `createPostValidator` schema to reuse the same validation rules. This approach keeps our validation logic DRY (Don't Repeat Yourself). If you need to change a rule later, you only update it in one place. In many applications, you might want different rules for creating vs. updating, but for DevShow, the requirements are the same.
 
 :::
 
@@ -163,14 +153,14 @@ export default class PostsController {
   async update({ bouncer, params, request, response, session }: HttpContext) {
     const post = await Post.findOrFail(params.id)
 
-    // Check authorization again—someone could send a PUT request directly
+    // Check authorization again. Someone could send a PUT request directly
     await bouncer.with(PostPolicy).authorize('edit', post)
 
     // Validate and update the post
     const data = await request.validateUsing(updatePostValidator)
     await post.merge(data).save()
 
-    session.flash('notification', 'Post updated successfully')
+    session.flash('success', 'Post updated successfully')
     return response.redirect().toRoute('posts.show', { id: post.id })
   }
 }
@@ -184,6 +174,8 @@ The key part here is `bouncer.with(PostPolicy).authorize('edit', post)`. This li
 - If the policy returns `true`, the code continues executing
 
 Notice we check authorization in both methods. Even though `edit` checks permissions, someone could bypass the form and send a PUT request directly to the `update` route. Always verify permissions before performing sensitive actions.
+
+You'll also notice `session.flash('success', 'Post updated successfully')` in the `update` method. [Flash messages](../../../guides/basics/session.md#flash-messages) are temporary messages stored in the session that are available on the next request and then automatically removed. This is perfect for showing success or error messages after form submissions. The message will be displayed on the page the user is redirected to.
 
 :::
 
@@ -208,13 +200,13 @@ router.put('/posts/:id', [controllers.Posts, 'update']).use(middleware.auth())
 router.post('/posts/:id/comments', [controllers.Comments, 'store']).use(middleware.auth())
 ```
 
-We need two routes—one to show the edit form and another to handle the form submission. Both require authentication.
+We need two routes (one to show the edit form and another to handle the form submission). Both require authentication.
 
 :::
 
 :::step{title="Create the edit form template"}
 
-Create the edit form template:
+Create the edit form template.
 
 ```bash
 node ace make:view posts/edit
@@ -281,28 +273,22 @@ Now add an Edit button to the post detail page. Open your `posts/show.edge` temp
 ```edge title="resources/views/posts/show.edge"
 @layout()
   <div class="container">
-    <div class="post-header">
-      @!link({
-        route: 'posts.index',
-        text: '&lsaquo; Go back to posts listing'
-      })
-
-      // [!code ++:9]
-      {{-- Show edit button only to the post owner --}}
-      @can('PostPolicy.edit', post)
-        <span>.</span>
-        @!link({
-          route: 'posts.edit',
-          routeParams: post,
-          text: 'Edit',
-        })
-      @end
-    </div>
-
-    <h1>{{ post.title }}</h1>
-
     <div class="post">
-      {{-- ... existing post info ... --}}
+      <div class="post-meta">...</div>
+
+      <div class="post-summary">...</div>
+
+      // [!code ++:10]
+      <div class="post-actions">
+        {{-- Show edit button only to the post owner --}}
+        @can('PostPolicy.edit', post)
+          @!link({
+            route: 'posts.edit',
+            routeParams: post,
+            text: 'Edit post',
+          })
+        @end
+      </div>
     </div>
   </div>
 @end
@@ -327,7 +313,7 @@ Visit a post you created and you'll see the Edit button. Click it and try updati
 ::::steps
 :::step{title="Add controller method"}
 
-Deleting a post is simpler than editing because there's no form to show—just a button that submits a DELETE request. Let's add the controller method to handle deletions.
+Deleting a post is simpler than editing because there's no form to show (just a button that submits a DELETE request). Let's add the controller method to handle deletions.
 
 ```ts title="app/controllers/posts_controller.ts"
 import type { HttpContext } from '@adonisjs/core/http'
@@ -350,7 +336,7 @@ export default class PostsController {
 
     await post.delete()
 
-    session.flash('notification', 'Post deleted successfully')
+    session.flash('success', 'Post deleted successfully')
     return response.redirect().toRoute('posts.index')
   }
 }
@@ -383,45 +369,43 @@ Add a delete button next to the edit button in your post detail template.
 
 ```edge title="resources/views/posts/show.edge"
 @layout()
-  <div class="container">
-    <div class="post-header">
-      @!link({
-        route: 'posts.index',
-        text: '&lsaquo; Go back to posts listing'
-      })
+<div class="container">
+    <div class="post">
+      <div class="post-meta">...</div>
 
-      {{-- Show edit button only to the post owner --}}
-      @can('PostPolicy.edit', post)
-        <span>.</span>
-        @!link({
-          route: 'posts.edit',
-          routeParams: post,
-          text: 'Edit',
-        })
-      @end
+      <div class="post-summary">...</div>
 
-      // [!code ++:7]
-      {{-- Show delete button only to the post owner --}}
-      @can('PostPolicy.delete', post)
-        <span>.</span>
-        @form({ route: 'posts.destroy', routeParams: post, method: 'DELETE' })
-          @!button({ text: 'Delete', class: 'destructive' })
+      <div class="post-actions">
+        {{-- Show edit button only to the post owner --}}
+        @can('PostPolicy.edit', post)
+          @!link({
+            route: 'posts.edit',
+            routeParams: post,
+            text: 'Edit post',
+          })
         @end
-      @end
-    </div>
 
-    {{-- ... rest of the template ... --}}
+        // [!code ++:7]
+        {{-- Show delete button only to the post owner --}}
+        @can('PostPolicy.delete', post)
+          <span>.</span>
+          @form({ route: 'posts.destroy', routeParams: post, method: 'DELETE' })
+            @!button({ text: 'Delete', class: 'destructive' })
+          @end
+        @end
+      </div>
+    </div>
   </div>
 @end
 ```
 
 A few important things about this delete button:
 
-- **Form wrapper** - We need a form with `method: 'DELETE'` because HTML forms only support GET and POST natively
-- **DELETE simulation** - AdonisJS uses a POST request with a special field to simulate the DELETE method
+- **DELETE method** - We're using `method: 'DELETE'` in the form, but HTML forms only support GET and POST methods natively
+- **Form method spoofing** - Under the hood, the `@form` component submits a POST request with a `?_method=DELETE` query string. AdonisJS recognizes this pattern and treats the request as a DELETE. This technique is called [form method spoofing](../../../guides/basics/routing.md#form-method-spoofing)
 - **Authorization check** - The `@can('PostPolicy.delete', post)` tag ensures only the post owner sees the button
 
-Try it out! Visit a post you created and you'll see both Edit and Delete buttons. Visit a post created by someone else—no buttons appear.
+Try it out! Visit a post you created and you'll see both Edit and Delete buttons. Visit a post created by someone else and no buttons appear.
 
 :::
 
@@ -459,7 +443,7 @@ export default class CommentsController {
 
     await comment.delete()
 
-    session.flash('notification', 'Comment deleted successfully')
+    session.flash('success', 'Comment deleted successfully')
     return response.redirect().toRoute('posts.show', { id: comment.post.id })
   }
 }
@@ -469,7 +453,7 @@ Here's what this method does:
 
 - **Finds the comment** using the ID from the route parameter
 - **Loads the post relationship** so we have access to `comment.post.id` for redirecting after deletion
-- **Checks authorization** with `CommentPolicy`—if the user doesn't own the comment, they get a 403 error
+- **Checks authorization** with `CommentPolicy`. If the user doesn't own the comment, they get a 403 error
 - **Deletes the comment** from the database
 - **Redirects back** to the post detail page where the comment was displayed
 
@@ -484,7 +468,10 @@ import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
 import { controllers } from '#generated/controllers'
 
-// ... existing routes
+router.get('/posts/:id/edit', [controllers.Posts, 'edit']).use(middleware.auth())
+router.put('/posts/:id', [controllers.Posts, 'update']).use(middleware.auth())
+router.delete('/posts/:id', [controllers.Posts, 'destroy']).use(middleware.auth())
+router.post('/posts/:id/comments', [controllers.Comments, 'store']).use(middleware.auth())
 
 // [!code ++:3]
 router
@@ -494,44 +481,36 @@ router
 
 :::
 
-:::step{title="Add delete buttons to comments"}
+:::step{title="Add delete button to comments"}
 
-Finally, add delete buttons to the comments list in your post detail template.
+Finally, add delete button to the comments list in your post detail template.
 
 ```edge title="resources/views/posts/show.edge"
 @layout()
   <div class="container">
-    {{-- ... post content ... --}}
+    <div class="post">
+      {{-- ... post content ... --}}
 
-    <div class="posts-comments">
-      <h2>Comments</h2>
+      <div class="post-comments">
+        <h2>Comments</h2>
 
-      <div class="post-comment-form">
-        {{-- ... comment form ... --}}
-      </div>
+        @each(comment in post.comments)
+          <div class="comment-item">
+            {{-- ... comment content ... --}}
 
-      @each(comment in post.comments)
-        <div class="comment-item">
-          // [!code ++:16]
-          <div class="comment-header">
-            <div class="comment-content">
-              <p>{{ comment.content }}</p>
-              <p class="comment-meta">
-                By {{ comment.user.fullName }} on {{ comment.createdAt.toFormat('MMM dd, yyyy') }}
-              </p>
-            </div>
-
-            {{-- Show delete button only to the comment owner --}}
-            @can('CommentPolicy.delete', comment)
-              @form({ route: 'comments.destroy', routeParams: [comment.id], method: 'DELETE' })
-                @!button({ type: 'submit', text: 'Delete', size: 'sm' })
+            // [!code ++:7]
+            <div class="comment-actions">
+              @can('CommentPolicy.delete', comment)
+                @form({ route: 'comments.destroy', routeParams: [comment.id], method: 'DELETE' })
+                  @!button({ type: 'submit', text: 'Delete', class: 'destructive' })
+                @end
               @end
-            @end
+            </div>
           </div>
-        </div>
-      @else
-        <p>No comments yet.</p>
-      @end
+        @else
+          <p> No comments yet. </p>
+        @end
+      </div>
     </div>
   </div>
 @end
@@ -543,7 +522,7 @@ How the comment delete button works:
 - **Visibility** - Only the comment's author will see the delete button
 - **Action** - The button submits a DELETE request to the `comments.destroy` route
 
-Visit a post with comments you created and you'll see delete buttons next to your comments. Try viewing comments from other users—no delete buttons will appear.
+Visit a post with comments you created and you'll see delete buttons next to your comments. Try viewing comments from other users and no delete buttons will appear.
 
 :::
 
@@ -559,4 +538,4 @@ You've successfully added authorization to DevShow using Bouncer's policy system
 - Added delete functionality for both posts and comments with proper permission checks
 - Used the `@can` tag in templates to conditionally show action buttons only to authorized users
 
-The key benefit of this approach is that your authorization logic is reusable and maintainable. When you need to change a permission rule, you update it in one place (the policy), and it automatically applies everywhere you use that policy—in controllers, templates, and anywhere else in your application.
+The key benefit of this approach is that your authorization logic is reusable and maintainable. When you need to change a permission rule, you update it in one place (the policy), and it automatically applies everywhere you use that policy (in controllers, templates, and anywhere else in your application).

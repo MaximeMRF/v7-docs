@@ -12,7 +12,7 @@ Depending on the starter kit you select, some files or directories may differ. F
 
 ## Overview
 
-Here's what a freshly created AdonisJS project looks like:
+Here's what a freshly created AdonisJS project looks like.
 
 ```sh
 ├── app
@@ -51,7 +51,14 @@ Feel free to create additional folders in the `app` directory to better organize
 
 ## `bin/`
 
-The `bin` directory contains the entry point files used to start your AdonisJS application in different environments.
+The `bin` directory contains the entry point files used to start your AdonisJS application in different environments. 
+
+- The `console.ts` file uses the Ace commandline framework to execute CLI commands.
+- The `server.ts` file starts the application in the web environment to listen for HTTP requests.
+- The `test.ts` file is used to boot the application for the testing environment.
+
+You usually won't need to modify these files unless you want to customize how the app boots in a 
+specific context.
 
 ```sh
 ├── bin
@@ -59,14 +66,6 @@ The `bin` directory contains the entry point files used to start your AdonisJS a
 │   ├── server.ts
 │   └── test.ts
 ```
-
-:::note
-You usually won't need to modify them unless you want to customize how the app boots in a specific context.
-:::
-
-- The `console.ts` file uses the Ace commandline framework to execute CLI commands.
-- The `server.ts` file starts the application in the web environment to listen for HTTP requests.
-- The `test.ts` file is used to boot the application for the testing environment.
 
 ## `config/`
 
@@ -90,7 +89,11 @@ All application and third-party configuration files live inside the `config` dir
 
 ## `database/`
 
-The `database` directory holds artifacts related to the database layer. By default, AdonisJS ships with Lucid ORM configured for SQLite; switching databases does not require reorganizing this folder.
+The `database` directory holds artifacts related to the database layer. By default, AdonisJS ships with Lucid ORM configured for SQLite; switching databases does not require reorganizing this folder. 
+
+- `migrations/` — versioned schema changes
+- `seeders/` — scripts to insert initial or test data
+- `factories/` — blueprints for generating model instances in tests or seeders
 
 See also: [Lucid documentation](https://lucid.adonisjs.com)
 
@@ -100,10 +103,6 @@ database/
   ├── seeders/
   └── factories/
 ```
-
-- `migrations/` — versioned schema changes
-- `seeders/` — scripts to insert initial or test data
-- `factories/` — blueprints for generating model instances in tests or seeders
 
 ## `providers/`
 
@@ -160,6 +159,13 @@ For applications using Inertia (alongside Vue or React), the frontend code is ke
 
 The `inertia` directory exists only in projects using the Inertia starter kit. It represents a sub-application containing the frontend source code, including React or Vue components, pages, and supporting utilities.
 
+- `pages/` — stores your Inertia pages written in React or Vue.
+- `app.(tsx|vue)` — the main entry point for the client-side application.
+- `ssr.(tsx|vue)` — the entry point for server-side rendering (SSR).
+- `tsconfig.json` - The TypeScript config file for the frontend codebase. The defaults are optimized for browser environments, JSX/TSX syntax, and Vite-based builds
+
+You are free to create additional subfolders, such as `components/`, `layouts/`, or `utils/`, to organize your frontend code.
+
 ```sh
 ├── inertia
 │   ├── css
@@ -171,14 +177,6 @@ The `inertia` directory exists only in projects using the Inertia starter kit. I
 │   ├── tsconfig.json
 │   └── types.ts
 ```
-
-- `pages/` — stores your Inertia pages written in React or Vue.
-- `app.(tsx|vue)` — the main entry point for the client-side application.
-- `ssr.(tsx|vue)` — the entry point for server-side rendering (SSR).
-
-You are free to create additional subfolders, such as `components/`, `layouts/`, or `utils/`, to organize your frontend code.
-
-The `inertia` directory is a separate frontend codebase with its own tsconfig.json file configured specifically for frontend development. The defaults are optimized for browser environments, JSX/TSX syntax, and Vite-based builds.
 
 ### Clear separation between frontend and backend
 
@@ -236,12 +234,12 @@ The `ace.js` file is the entry point for executing Ace commands. This file confi
 
 `adonisrc.ts` is the project manifest. It tells AdonisJS how to discover and load parts of your application and includes configuration for:
 
-See also: [AdonisRC file reference](../reference/adonisrc_file.md)
-
 - Directory aliases (for `app`, `start`, etc.)
 - Preload files
 - Registered providers and commands
 - Assembler hooks
+
+See also: [AdonisRC file reference](../reference/adonisrc_file.md)
 
 ## `eslint.config.js`
 
