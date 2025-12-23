@@ -28,6 +28,11 @@
         "contentPath": "./basics/response.md"
       },
       {
+        "title": "Body parser",
+        "permalink": "guides/basics/body-parser",
+        "contentPath": "./basics/body_parser.md"
+      },
+      {
         "title": "Validation",
         "permalink": "guides/basics/validation",
         "contentPath": "./basics/validation.md"
@@ -36,11 +41,6 @@
         "title": "File uploads",
         "permalink": "guides/basics/file-uploads",
         "contentPath": "./basics/file_uploads.md"
-      },
-      {
-        "title": "Body parser",
-        "permalink": "guides/basics/body-parser",
-        "contentPath": "./basics/body_parser.md"
       },
       {
         "title": "Session",

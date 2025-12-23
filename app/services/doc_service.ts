@@ -18,4 +18,12 @@ export class DocService {
         permalink,
       })
   }
+
+  async retrieveLlmPath(permalink: string) {
+    const doc = await findDoc(permalink)
+    if (!doc) {
+      throw new errors.E_ROUTE_NOT_FOUND(['GET', permalink])
+    }
+    return doc.doc.contentPath.replace('.md', '.llm.md')
+  }
 }

@@ -211,7 +211,7 @@ The `tests` directory contains automated tests. AdonisJS uses the [Japa](https:/
 
 Tests are organized within specific sub-folders. When running `unit` tests, AdonisJS boots the application but does not start the HTTP server. Whereas, during `functional` tests, we start the HTTP server and the Vite Dev-server.
 
-See also: [Testing docs]()
+See also: [Testing docs](../guides/testing/introduction.md)
 
 ```sh
 ├── tests
