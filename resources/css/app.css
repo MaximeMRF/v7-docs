@@ -59,10 +59,10 @@
   color: white;
 }
 
-*::-webkit-scrollbar {
+/* *::-webkit-scrollbar {
   width: 8px;
   height: 6px;
-}
+} */
 
 *::-webkit-scrollbar-thumb {
   background-color: var(--color-woodsmoke-700);

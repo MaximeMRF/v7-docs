@@ -33,6 +33,11 @@
         "contentPath": "./dev_environment.md"
       },
       {
+        "title": "Configuration",
+        "permalink": "configuration",
+        "contentPath": "./configuration.md"
+      },
+      {
         "title": "FAQs",
         "permalink": "faqs",
         "oldUrls": ["guides/preface/faqs"],
@@ -77,6 +82,11 @@
         "title": "Authorization",
         "permalink": "tutorial/hypermedia/authorization",
         "contentPath": "./tutorial/hypermedia/authorization.md"
+      },
+      {
+        "title": "Deployment",
+        "permalink": "tutorial/hypermedia/deployment",
+        "contentPath": "./tutorial/hypermedia/deployment.md"
       }
     ]
   },
