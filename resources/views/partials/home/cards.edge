@@ -33,7 +33,7 @@
     <a href="{{ card.href }}" {{ card.target ? `target=${card.target}` : '' }}>
       <div class="flex items-center justify-center group bg-woodsmoke-900 rounded-md border border-woodsmoke-800/40 h-47 relative">
         <div class="absolute inset-0 bg-[url('/resources/assets/round.png')] bg-size-[7px] opacity-23 rounded-md"></div>
-        @!svg(card.icon, { width: '70px', height: '70px', class: 'text-woodsmoke-400 scale-90 transition-transform duration-300 z-1 group-hover:scale-110' })
+        @!svg(card.icon, { width: '70px', height: '70px', class: 'text-woodsmoke-400 scale-90 transition-transform duration-300 z-1 group-hover:scale-105' })
         @if(card.badgeIcon)
           @!svg(card.badgeIcon, { width: '32px', height: '32px', class: 'text-amber-300 z-1 absolute -right-4 -top-3 rotate-15' })
         @end

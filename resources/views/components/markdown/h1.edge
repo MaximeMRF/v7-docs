@@ -1,0 +1,6 @@
+<div class="flex gap-4 justify-between">
+    <h1 {{{ $markdown.utils.stringifyAttributes(node.properties) }}}>
+        @markdownSlot()
+    </h1>
+    @!docActionsDropdown()
+</div>

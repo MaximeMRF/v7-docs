@@ -1,38 +1,93 @@
+@let(footerSections = [{
+    mainTitle: "VSCode Extensions",
+    items: [
+        {
+            title: "AdonisJS",
+            url: "https://marketplace.visualstudio.com/items?itemName=jripouteau.adonis-vscode-extension"
+        },
+        {
+            title: "Edge",
+            url: "https://marketplace.visualstudio.com/items?itemName=AdonisJS.vscode-edge"
+        },
+        {
+            title: "Japa",
+            url: "https://marketplace.visualstudio.com/items?itemName=jripouteau.japa-vscode"
+        }
+    ]
+},
+{
+    mainTitle: "Community",
+    items: [
+        {
+            title: "Discord",
+            url: "https://discord.com/invite/vDcEjq6"
+        },
+        {
+            title: "Twitter",
+            url: "https://x.com/adonisframework"
+        },
+        {
+            title: "GitHub",
+            url: "https://github.com/adonisjs"
+        },
+        {
+            title: "Forum",
+            url: "https://github.com/orgs/adonisjs/discussions"
+        }
+    ]
+},
+{
+    mainTitle: "Resources",
+    items: [
+        {
+            title: "About",
+            url: "https://adonisjs.com/about"
+        },
+        {
+            title: "Insiders",
+            url: "https://adonisjs.com/insiders"
+        },
+        {
+            title: "Blog",
+            url: "https://adonisjs.com/blog"
+        },
+        {
+            title: "Packages",
+            url: "https://adonisjs.com/packages"
+        },
+        {
+            title: "Contributors",
+            url: "https://adonisjs.com/contributors"
+        },
+        {
+            title: "Support",
+            url: "https://adonisjs.com/support"
+        }
+    ]
+}])
+
 <div class="border-t border-woodsmoke-900">
     <div class="container mx-auto px-5 lg:px-10 pt-15 md:pt-30 lg:border-x border-woodsmoke-900">
         <div class="lg:px-22.5 mb-30 md:mb-52 space-y-7 sm:space-y-5">
+            @each(footer in footerSections)
             <div class="flex flex-col sm:flex-row gap-1.5 sm:gap-3">
-                <label class="text-14 text-woodsmoke-50">VSCode Extensions</label>
-                <div class="flex-1 border-b border-dashed border-woodsmoke-800 sm:mb-1.5"></div>
-                <div class="flex gap-6 text-14">
-                    <a href="" class="relative">AdonisJS</a>
-                    <a href="" class="relative before:content-['/'] before:absolute before:-left-3.5">Edge</a>
-                    <a href="" class="relative before:content-['/'] before:absolute before:-left-3.5">Japa</a>
+                <label class="text-14 text-woodsmoke-50">
+                    {{ footer.mainTitle }}
+                </label>
+                <div class="flex-1 border-b border-dashed border-woodsmoke-800 sm:mb-1.5">
+                </div>
+                <div class="flex flex-wrap gap-5.5 text-14">
+                    @each(subItem in footer.items)
+                    <a href="{{ subItem.url }}" target="_blank"
+                        class="relative hover:text-woodsmoke-50 transition-colors not-last:after:content-['/'] after:pointer-events-none after:text-woodsmoke-400 after:absolute after:-right-3.5">
+                        {{ subItem.title }}
+                    </a>
+                    @end
                 </div>
             </div>
-
-            <div class="flex flex-col sm:flex-row gap-1.5 sm:gap-3">
-                <label class="text-14 text-woodsmoke-50">Community</label>
-                <div class="flex-1 border-b border-dashed border-woodsmoke-800 sm:mb-1.5"></div>
-                <div class="flex gap-6 text-14">
-                    <a href="" class="relative">Discord</a>
-                    <a href="" class="relative before:content-['/'] before:absolute before:-left-3.5">Twitter</a>
-                    <a href="" class="relative before:content-['/'] before:absolute before:-left-3.5">GitHub</a>
-                    <a href="" class="relative before:content-['/'] before:absolute before:-left-3.5">Forum</a>
-                </div>
-            </div>
-
-            <div class="flex flex-col sm:flex-row gap-1.5 sm:gap-3">
-                <label class="text-14 text-woodsmoke-50">Resources</label>
-                <div class="flex-1 border-b border-dashed border-woodsmoke-800 sm:mb-1.5"></div>
-                <div class="flex gap-6 text-14">
-                    <a href="" class="relative">About</a>
-                    <a href="" class="relative before:content-['/'] before:absolute before:-left-3.5">Blog</a>
-                    <a href="" class="relative before:content-['/'] before:absolute before:-left-3.5">Packages</a>
-                    <a href="" class="relative before:content-['/'] before:absolute before:-left-3.5">Contribute</a>
-                </div>
-            </div>
+            @end
         </div>
-        <img class="mx-auto" src="/resources/assets/footer-logo.svg" alt="AdonisJS Logo">
+        <img class="mx-auto" src="/resources/assets/footer-logo.svg" alt="AdonisJS Logo" loading="lazy" width="1248"
+            height="277" />
     </div>
 </div>
