@@ -2,7 +2,7 @@
 
 You might be wondering why we're covering CLI and REPL instead of jumping straight into building features. Here's why: throughout this tutorial, you'll constantly use Ace commands to generate controllers, models, and other files. Getting familiar with the CLI now prevents us from interrupting the flow later.
 
-More importantly, the [REPL]() will become our playground for experimenting with models and databases. When we explore database queries, filters, and relationships in later sections, we'll use the REPL to try things out. It's a throwaway environment that lets us focus on learning concepts without the ceremony of building complete features.
+More importantly, the [REPL](../../../guides/ace/repl.md) will become our playground for experimenting with models and databases. When we explore database queries, filters, and relationships in later sections, we'll use the REPL to try things out. It's a throwaway environment that lets us focus on learning concepts without the ceremony of building complete features.
 
 ## Exploring available commands
 

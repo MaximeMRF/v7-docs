@@ -13,6 +13,12 @@
         "contentPath": "./basics/controllers.md"
       },
       {
+        "title": "HTTP context",
+        "permalink": "guides/basics/http-context",
+        "oldUrls": ["guides/concepts/http-context"],
+        "contentPath": "./basics/http_context.md"
+      },
+      {
         "title": "Middleware",
         "permalink": "guides/basics/middleware",
         "contentPath": "./basics/middleware.md"
@@ -28,6 +34,11 @@
         "contentPath": "./basics/response.md"
       },
       {
+        "title": "Body parser",
+        "permalink": "guides/basics/body-parser",
+        "contentPath": "./basics/body_parser.md"
+      },
+      {
         "title": "Validation",
         "permalink": "guides/basics/validation",
         "contentPath": "./basics/validation.md"
@@ -36,11 +47,6 @@
         "title": "File uploads",
         "permalink": "guides/basics/file-uploads",
         "contentPath": "./basics/file_uploads.md"
-      },
-      {
-        "title": "Body parser",
-        "permalink": "guides/basics/body-parser",
-        "contentPath": "./basics/body_parser.md"
       },
       {
         "title": "Session",
@@ -226,34 +232,14 @@
         "contentPath": "./concepts/barrel_files.md"
       },
       {
-        "title": "HTTP context",
-        "permalink": "guides/concepts/http-context",
-        "contentPath": "./concepts/http_context.md"
-      },
-      {
         "title": "Extending AdonisJS",
         "permalink": "guides/concepts/extending-adonisjs",
         "contentPath": "./concepts/extending_adonisjs.md"
       },
       {
-        "title": "Async Local Storage",
-        "permalink": "guides/concepts/async-local-storage",
-        "contentPath": "./concepts/async_local_storage.md"
-      },
-      {
-        "title": "Content Negotiation",
-        "permalink": "guides/concepts/content-negotiation",
-        "contentPath": "./concepts/content_negotiation.md"
-      },
-      {
         "title": "Assembler Hooks",
         "permalink": "guides/concepts/assembler-hooks",
         "contentPath": "./concepts/assembler_hooks.md"
-      },
-      {
-        "title": "TypeScript Build Process",
-        "permalink": "guides/concepts/typescript-build-process",
-        "contentPath": "./concepts/typescript_build_process.md"
       }
     ]
   },

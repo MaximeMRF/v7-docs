@@ -4,16 +4,12 @@ summary: Learn how to handle file uploads in AdonisJS, from basic single file up
 
 # File Uploads
 
-You will learn how to:
+This guide covers file uploads in AdonisJS, from basic single file uploads to advanced direct uploads with cloud storage providers. You will learn how to:
 
-- Create forms that accept file uploads with proper multipart encoding
-- Access and validate uploaded files in your controllers
-- Use VineJS validators for robust file validation
-- Set up FlyDrive for permanent file storage
-- Move files from temporary to permanent storage locations
-- Handle multiple file uploads in a single request
-- Implement direct uploads to cloud storage providers
-- Secure your file upload endpoints against abuse
+- Accept and validate file uploads in your application
+- Store files permanently using FlyDrive
+- Handle multiple file uploads and direct cloud uploads
+- Secure your file upload endpoints
 
 ## Overview
 
@@ -21,9 +17,9 @@ File uploads allow users to send files from their browsers to your AdonisJS appl
 
 When a file is uploaded, AdonisJS automatically saves it to the server's `tmp` directory. From there, you can validate the file in your controllers and then move it to permanent storage. 
 
-For permanent storage, AdonisJS integrates with FlyDrive, which provides a unified API for working with local file systems as well as cloud storage solutions like Amazon S3, Cloudflare R2, and Google Cloud Storage.
+For permanent storage, AdonisJS integrates with [FlyDrive](https://flydrive.dev/docs/introduction), which provides a unified API for working with local file systems as well as cloud storage solutions like Amazon S3, Cloudflare R2, and Google Cloud Storage.
 
-## Creating your first file upload
+## Uploading your first file
 
 We'll build a feature that allows users to update their profile avatar. This is a common requirement and demonstrates all the essential concepts.
 
@@ -32,7 +28,6 @@ We'll build a feature that allows users to update their profile avatar. This is 
 :::step{title="Create the upload form"}
 
 First, create a form that accepts file uploads. The critical part is setting `enctype="multipart/form-data"` on the form element. Without this attribute, the browser won't send files correctly.
-
 ```edge title="resources/views/pages/profile.edge"
 @form({ route: 'profile_avatar.update', enctype: 'multipart/form-data' })
   @field.root({ name: 'avatar' })
@@ -111,7 +106,7 @@ export default class ProfileAvatarController {
       size: '2mb',
       extnames: ['jpg', 'png', 'jpeg']
     })
-    
+
     if (!avatar) {
       return response.badRequest('Please upload an avatar image')
     }
@@ -127,7 +122,7 @@ export default class ProfileAvatarController {
 
 The validation happens as soon as you call `request.file()`. If the file is too large or has an invalid extension, the `avatar.hasErrors` property will be `true` and the `avatar.errors` array will contain error messages.
 
-### VineJS validation (recommended)
+### VineJS validation
 
 While inline validation works, using VineJS validators is the recommended approach because it provides better error messages, consistent validation patterns, and easier testing.
 
@@ -152,11 +147,10 @@ import { updateAvatarValidator } from '#validators/user'
 
 export default class ProfileAvatarController {
   async update({ request }: HttpContext) {
-    const payload = await request.validateUsing(updateAvatarValidator)
-    
-    console.log(payload.avatar)
-    
-    return 'Avatar validated successfully'
+    const payload = await request.validateUsing(updateAvatarValidator)    
+
+    console.log(payload.avatar)    
+    return 'Avatar uploaded and validated successfully'
   }
 }
 ```
@@ -167,23 +161,19 @@ If validation fails, AdonisJS automatically returns a 422 response with detailed
 A key security feature of AdonisJS is that it uses [magic number detection](https://en.wikipedia.org/wiki/Magic_number_(programming)) to validate file types. This means even if someone renames a `.exe` file to `.jpg`, AdonisJS will detect the actual file type and reject it. This protects your application from users trying to bypass validation by simply changing file extensions.
 :::
 
-## Setting up FlyDrive for permanent storage
+## Storing and serving uploaded files
 
 Files uploaded through forms are temporarily stored in the `tmp` directory. Most operating systems automatically clean up temporary files, so you cannot rely on them persisting. For permanent storage, you need to move files to a location where they will be preserved.
 
-AdonisJS uses FlyDrive for permanent file storage. FlyDrive provides a unified API that works with local file systems during development and cloud storage providers like S3 or R2 in production.
+AdonisJS uses [FlyDrive](../digging_deeper/drive.md) for permanent file storage. FlyDrive provides a unified API that works with local file systems during development and cloud storage providers like S3 or R2 in production.
 
-### Installing FlyDrive
-
-Run the following command to install and configure FlyDrive.
+Install and configure FlyDrive by running the following command:
 
 ```bash
 node ace add @adonisjs/drive
 ```
 
-This command installs the `@adonisjs/drive` package and creates a `config/drive.ts` configuration file. The `@adonisjs/drive` package is a thin wrapper over FlyDrive that integrates seamlessly with AdonisJS. For detailed configuration options, refer to the [FlyDrive documentation](https://flydrive.dev) and the Drive reference guide.
-
-After installation, FlyDrive is ready to use with a local disk configuration for development.
+This command installs the `@adonisjs/drive` package and creates a `config/drive.ts` configuration file with local disk storage ready to use. For cloud storage configuration (S3, R2, GCS), see the [Drive documentation](../digging_deeper/drive.md).
 
 ### Moving files to permanent storage
 
@@ -198,10 +188,21 @@ export default class ProfileAvatarController {
   async update({ request, auth }: HttpContext) {
     const payload = await request.validateUsing(updateAvatarValidator)
     
+    /**
+     * Use a unique random name for storing the file
+     */
     const fileName = `${string.uuid()}.${payload.avatar.extname}`
     
+    /**
+     * Move file using the pre-configured drive disk.
+     */
+    // [!code highlight]
     await payload.avatar.moveToDisk(fileName)
     
+    /**
+     * Update user row in the database to reflect the newly
+     * updated avatar filename
+     */
     const user = auth.getUserOrFail()
     user.avatarFileName = fileName
     await user.save()
@@ -211,34 +212,29 @@ export default class ProfileAvatarController {
 }
 ```
 
-We generate a unique filename using UUID to prevent collisions. Multiple users might upload files named "avatar.jpg", so we need unique names to prevent overwriting.
+- We generate a unique filename using UUID to prevent collisions. Multiple users might upload files named "avatar.jpg", so unique names prevent overwriting.
 
-The `moveToDisk()` method moves the file from tmp to permanent storage. It uses the configured disk, which is the local filesystem in development or cloud storage in production.
+- The `moveToDisk()` method handles the transfer from tmp to permanent storage. It uses the configured disk (local filesystem in development or cloud storage in production).
 
-After moving the file, you should store the filename in the database so you can retrieve it later. You'll need this to display the avatar or allow users to download it.
+- Store the filename in your database after moving. You'll need it later to display the avatar or generate download links.
 
-After moving the file, two new properties become available on the file object:
+### Accessing your uploaded files
 
-- `fileName` - The name you specified when moving the file
-- `filePath` - The full path where the file was stored
+The `@adonisjs/drive` package includes a built-in file server that automatically serves uploaded files. The file server registers routes under `/uploads` followed by your directory structure.
 
-By default, FlyDrive stores files in the `storage` directory when using the local disk. The `@adonisjs/drive` package includes a built-in file server that automatically serves uploaded files. The file server registers a route at `/uploads` followed by your directory structure, making files accessible without additional configuration.
+For example, if you store a file as `avatars/123e4567.jpg`, it becomes accessible at:
 
-For example, if you store a file as `avatars/123e4567.jpg`, it will be accessible at `/uploads/avatars/123e4567.jpg`.
+```
+http://localhost:3333/uploads/avatars/123e4567.jpg
+```
 
-:::note{title="What you learned so far"}
+Now, instead of hardcoding this path, you must use the `driveUrl` Edge helper to compute the path to a file, as it will return the correct URL even when using cloud storage providers like S3 or R2.
 
-- ✓ Create forms with the correct `enctype` for file uploads
-- ✓ Access uploaded files using `request.file()`
-- ✓ Validate files using VineJS validators
-- ✓ Install and configure FlyDrive
-- ✓ Move files from temporary to permanent storage
-- ✓ Generate unique filenames to prevent collisions
-- ✓ Store file references in your database
+```edge
+<img src="{{ await driveUrl(user.avatarFileName) }}" alt="User avatar">
+```
 
-:::
-
-## Intermediate: Uploading multiple files
+## Uploading multiple files
 
 Many applications need to accept multiple files in a single request. For example, allowing users to upload several documents for a project, or multiple product images at once.
 
@@ -260,7 +256,7 @@ To accept multiple files, add the `multiple` attribute to your file input and us
 
 ### Accessing multiple files
 
-Use `request.files()` (plural) instead of `request.file()` to access multiple uploaded files.
+Use `request.files()` (plural) instead of `request.file()` to access multiple uploaded files. This method returns an array of file objects, even if only one file was uploaded.
 
 ```ts title="app/controllers/project_documents_controller.ts"
 import { HttpContext } from '@adonisjs/core/http'
@@ -280,11 +276,9 @@ export default class ProjectDocumentsController {
 }
 ```
 
-This method returns an array of file objects, even if only one file was uploaded.
-
 ### Validating multiple files
 
-With VineJS, use `vine.array()` to validate an array of files.
+With VineJS, use `vine.array()` to validate an array of files. Each file in the array must meet the specified size and extension requirements.
 
 ```ts title="app/validators/project.ts"
 import vine from '@vinejs/vine'
@@ -301,11 +295,9 @@ export const uploadDocumentsValidator = vine.compile(
 )
 ```
 
-Each file in the array must meet the specified size and extension requirements.
-
 ### Processing multiple files
 
-Loop through the validated files and move each one to permanent storage individually.
+Loop through the validated files and move each one to permanent storage individually. Each file in the array has the same properties and methods as single files, including `moveToDisk()`.
 
 ```ts title="app/controllers/project_documents_controller.ts"
 import { HttpContext } from '@adonisjs/core/http'
@@ -328,11 +320,7 @@ export default class ProjectDocumentsController {
 }
 ```
 
-You'll want to store the array of filenames in your database. You might store this as JSON or create separate records in a documents table.
-
-The process for multiple files is similar to single files, but you work with arrays instead of individual objects. Each file in the array has the same properties and methods as single files, including `moveToDisk()`.
-
-## Advanced: Direct uploads
+## Direct uploads
 
 Direct uploads allow files to be uploaded directly from the browser to cloud storage providers like S3, R2, or Google Cloud Storage, completely bypassing your AdonisJS server. 
 
@@ -374,7 +362,6 @@ The client-side code is more complex than standard form uploads. You'll need a J
 Here's a high-level example using the Fetch API.
 
 ```javascript
-// Client-side JavaScript example
 async function uploadFile(file) {
   // Step 1: Request a signed URL from your server
   const response = await fetch('/signed-upload-url', {
@@ -402,7 +389,7 @@ The first step requests a signed URL from your AdonisJS application. The second 
 
 For production applications, consider using a library like Uppy.io that provides additional features like upload progress tracking, automatic retries, resumable uploads, and user-friendly interfaces.
 
-## Security: Restricting file upload routes
+## Restricting file upload routes
 
 Now that you understand how to implement file uploads, it's important to secure your application against potential abuse.
 
@@ -424,14 +411,6 @@ export default defineConfig({
 
 This configuration ensures that only the specified routes will process multipart requests. All other routes will reject file uploads, preventing attackers from uploading files to random endpoints.
 
-If you have public endpoints that accept file uploads (endpoints that don't require authentication), apply strict rate limiting to prevent abuse. See the rate limiting guide for implementation details.
+If you have public endpoints that accept file uploads (endpoints that don't require authentication), apply strict rate limiting to prevent abuse. See the [rate limiting guide](../../guides/security/rate_limiting.md) for implementation details.
 
-For comprehensive bodyparser configuration options, refer to the BodyParser reference guide.
-
-## See also
-
-- [VineJS Validation Documentation](https://vinejs.dev) - Complete guide to validation including file validation
-- [FlyDrive Documentation](https://flydrive.dev) - Comprehensive documentation for the underlying storage library
-- Drive Reference Guide - Detailed configuration options for `@adonisjs/drive`
-- BodyParser Reference Guide - Complete bodyparser configuration reference including multipart options
-- Rate Limiting Guide - Protect file upload endpoints from abuse
+For comprehensive bodyparser configuration options, refer to the [BodyParser guide](./body_parser.md).

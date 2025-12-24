@@ -4,7 +4,7 @@ summary: Learn how to validate user input in AdonisJS using VineJS validators at
 
 # Validation
 
-You will learn how to:
+This guide covers validation in AdonisJS using VineJS validators at the controller level. You will learn how to:
 
 - Create and use VineJS validators in controllers
 - Handle validation errors with automatic content negotiation
@@ -17,7 +17,7 @@ You will learn how to:
 
 Validation in AdonisJS happens at the controller level, allowing you to validate and abort requests early if the provided data is invalid. This approach lets you model validations around forms or expected request data rather than coupling validations to your models layer.
 
-Once data passes validation, you can trust it completely and pass it to other layers of your application—whether services, data models, or business logic—without additional checks. This creates a clear trust boundary in your application architecture.
+Once data passes validation, you can trust it completely and pass it to other layers of your application (whether services, data models, or business logic) without additional checks. This creates a clear trust boundary in your application architecture.
 
 ## VineJS - The validation library
 
@@ -79,14 +79,14 @@ export default class PostsController {
 }
 ```
 
-The `request.validateUsing()` method automatically validates the request body. You don't need to explicitly pass the body data—the `request` object already has access to it. If validation fails, an exception is thrown and handled automatically. The validated payload is returned and safe to use throughout your application.
+The `request.validateUsing()` method automatically validates the request body. You don't need to explicitly pass the body data (the `request` object already has access to it). If validation fails, an exception is thrown and handled automatically. The validated payload is returned and safe to use throughout your application.
 
 :::
 ::::
 
 ## Understanding error handling
 
-When validation fails, the `request.validateUsing()` method throws an exception. You don't need to manually handle this exception—AdonisJS's [global exception handler](./exception_handling.md) automatically converts it into an appropriate response based on the request type using content negotiation.
+When validation fails, the `request.validateUsing()` method throws an exception. You don't need to manually handle this exception. AdonisJS's [global exception handler](./exception_handling.md) automatically converts it into an appropriate response based on the request type using content negotiation.
 
 ### How content negotiation works
 
@@ -98,17 +98,20 @@ AdonisJS detects what kind of response the client expects and formats validation
 | Inertia | Redirects back to form | Shared via Inertia state |
 | API (JSON) | Returns 422 status | JSON with `errors` array |
 
-**For hypermedia applications (traditional server-rendered apps):**
+**For hypermedia applications (traditional server-rendered apps)**
+
 - The user is redirected back to the form
 - Error messages are flashed to the session using AdonisJS's session flash store
 - You can display these errors in your template using the `@field.error` component
 
-**For Inertia applications:**
+**For Inertia applications**
+
 - The user is redirected back to the form
 - Error messages are shared via Inertia's shared state
 - Errors are automatically available in your frontend components
 
-**For API requests (clients expecting JSON):**
+**For API requests (clients expecting JSON)**
+
 - A JSON response is returned with status code 422
 - The response contains an `errors` array with all validation error messages
 - Each error includes the field name, rule that failed, and error message
@@ -139,10 +142,7 @@ You don't need to wrap `validateUsing()` in try/catch blocks. The global excepti
 
 ## Customizing error messages
 
-By default, VineJS provides generic error messages. You can customize these messages globally in two ways:
-
-- Using a custom [VineJS error messages provider](https://vinejs.dev/docs/custom_error_messages#creating-a-messages-provider)
-- Or using the i18n package for localized messages
+By default, VineJS provides generic error messages. You can customize these messages globally in two ways. You can use a custom [VineJS error messages provider](https://vinejs.dev/docs/custom_error_messages#creating-a-messages-provider), or you can use the i18n package for localized messages.
 
 ### Using a custom messages provider
 
@@ -174,7 +174,7 @@ The `{{ field }}` placeholder is automatically replaced with the actual field na
 
 For applications that need multiple languages, use the `@adonisjs/i18n` package to define validation messages in translation files. This allows you to provide validation errors in different languages based on the user's locale.
 
-First, install and configure the i18n package (see the [i18n guide](./i18n.md) for full setup instructions). Then define your messages in language-specific JSON files.
+First, install and configure the i18n package (see the [i18n guide](../digging_deeper/i18n.md) for full setup instructions). Then define your messages in language-specific JSON files.
 
 ```json title="resources/lang/en/validator.json"
 {
@@ -340,4 +340,4 @@ Now that you understand validation in AdonisJS, you can:
 - Explore the [VineJS documentation](https://vinejs.dev) to discover all available schema types and validation rules
 - Learn about [flash messages](./session.md#flash-messages) to display validation errors in your templates
 - Read the [exception handling guide](./exception_handling.md) to understand how AdonisJS processes validation errors
-- Check out the [i18n guide](./i18n.md) for localizing validation messages in multiple languages
+- Check out the [i18n guide](../digging_deeper/i18n.md) for localizing validation messages in multiple languages

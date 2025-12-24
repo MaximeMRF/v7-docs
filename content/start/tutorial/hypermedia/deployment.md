@@ -390,16 +390,7 @@ Try creating an account, posting content, and adding comments. Everything should
 
 ## What you built
 
-Congratulations! You've successfully deployed DevShow to production. Here's what you accomplished in this final chapter:
-
-- Switched from SQLite to PostgreSQL for production-ready database management
-- Created an optimized production build with `node ace build`
-- Understood the differences between development and production environments
-- Deployed your application to Cloud Galaxy with managed infrastructure
-- Configured environment variables securely for production
-- Ran migrations in production to set up your database schema
-
-DevShow is now live and ready for users! Throughout this tutorial, you've built a complete web application from scratch, learning how to:
+Congratulations! You've successfully deployed DevShow to production. Throughout this tutorial, you've built a complete web application from scratch, learning how to:
 
 - Create models and migrations to manage your database structure
 - Build controllers to handle HTTP requests and business logic
@@ -408,12 +399,4 @@ DevShow is now live and ready for users! Throughout this tutorial, you've built 
 - Validate user input with forms
 - Deploy to production with proper configuration
 
-These are the fundamental skills you'll use in every AdonisJS application you build. Ready to keep learning? Check out the [AdonisJS documentation](https://docs.adonisjs.com) to dive deeper into advanced topics like:
-
-- [Background jobs and queues](../../../guides/digging-deeper/ace-commands.md)
-- [Email sending](../../../guides/digging-deeper/mailers.md)
-- [File uploads and storage](../../../guides/digging-deeper/drive.md)
-- [Real-time features with WebSockets](../../../guides/digging-deeper/transmit.md)
-- [API development with REST](../../../guides/basics/controllers.md)
-
-Happy building!
+These are the fundamental skills you'll use in every AdonisJS application you build. Ready to keep learning? Check out the [guides](../../../guides/basics/routing.md) to dive deeper into advanced topics.
