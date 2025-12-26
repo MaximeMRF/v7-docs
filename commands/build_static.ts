@@ -29,11 +29,24 @@ export default class BuildStatic extends BaseCommand {
     await writeFile(outputPath, html)
   }
 
-  async #compileDoc(doc: Infer<typeof singleDoc>) {
+  async #compileDoc(doc: Infer<typeof singleDoc> & { variant?: string }) {
     const { DocService } = await import('#services/doc_service')
     const docsService = await this.app.container.make(DocService)
-    const html = await docsService.renderDoc(doc.permalink, this.#createView(`/${doc.permalink}`))
-    await this.#writeOutput(doc.permalink, html)
+    if (doc.permalink) {
+      const html = await docsService.renderDoc(doc.permalink, this.#createView(`/${doc.permalink}`))
+      await this.#writeOutput(doc.permalink, html)
+    } else {
+      await Promise.all(
+        doc.variations!.map((variation) => {
+          return this.#compileDoc({
+            ...doc,
+            permalink: variation.permalink,
+            contentPath: variation.contentPath,
+            variant: variation.name,
+          })
+        })
+      )
+    }
   }
 
   async #createHomePage() {
