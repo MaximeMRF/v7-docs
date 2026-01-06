@@ -13,7 +13,7 @@ edge.use(edgeMarkdown, {
   prefix: 'markdown',
   highlight: {
     enabled: true,
-    langs: ['typescript', 'json', 'edge', 'html', 'sql', 'bash', 'dotenv', 'tsx'],
+    langs: ['typescript', 'json', 'edge', 'html', 'sql', 'bash', 'dotenv', 'tsx', 'handlebars'],
     theme: 'github-dark',
   },
   allowHTML: true,

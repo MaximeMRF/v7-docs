@@ -33,8 +33,12 @@
         "contentPath": "./dev_environment.md"
       },
       {
-        "title": "Configuration",
+        "title": "Configuration & Environment",
         "permalink": "configuration",
+        "oldUrls": [
+          "guides/getting-started/configuration",
+          "guides/getting-started/environment-variables"
+        ],
         "contentPath": "./configuration.md"
       },
       {

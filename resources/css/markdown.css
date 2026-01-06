@@ -95,6 +95,9 @@
   @apply text-woodsmoke-50;
   font-weight: 600;
 }
+.prose a strong {
+  color: inherit;
+}
 
 .prose a {
   font-weight: 500;

@@ -15,7 +15,7 @@
     href: '/reference/application',
     title: 'Reference',
     icon: 'mynaui:code',
-    reference: sections.reference.has(doc.permalink),
+    active: sections.reference.has(doc.permalink),
   }
 ])
 
@@ -48,13 +48,15 @@
       x-data="{ expanded: {{ isExpanded }} }"
       :class="{ expanded }"
     >
-      <button
-        class="font-display text-15 leading-5 mb-4 flex text-white items-center gap-1.5 whitespace-nowrap"
-        @click="expanded = !expanded"
-      >
-        <span class="inline-block">{{ group.category }}</span>
-        @svg('mynaui:chevron-right', { class: 'w-4 h-4 mt-0.5 transition-transform' })
-      </button>
+      @if(group.category !== 'Root')
+        <button
+          class="font-display text-15 leading-5 mb-4 flex text-white items-center gap-1.5 whitespace-nowrap"
+          @click="expanded = !expanded"
+        >
+          <span class="inline-block">{{ group.category }}</span>
+          @svg('mynaui:chevron-right', { class: 'w-4 h-4 mt-0.5 transition-transform' })
+        </button>
+      @end
 
       <ul>
         @each(doc in group.children)

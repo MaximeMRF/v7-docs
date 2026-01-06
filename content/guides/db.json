@@ -64,6 +64,11 @@
         "contentPath": "./basics/exception_handling.md"
       },
       {
+        "title": "Debugging",
+        "permalink": "guides/basics/debugging",
+        "contentPath": "./basics/debugging.md"
+      },
+      {
         "title": "Static File Server",
         "permalink": "guides/basics/static-file-server",
         "contentPath": "./basics/static_file_server.md"
@@ -232,14 +237,19 @@
         "contentPath": "./concepts/barrel_files.md"
       },
       {
-        "title": "Extending AdonisJS",
-        "permalink": "guides/concepts/extending-adonisjs",
-        "contentPath": "./concepts/extending_adonisjs.md"
-      },
-      {
         "title": "Assembler Hooks",
         "permalink": "guides/concepts/assembler-hooks",
         "contentPath": "./concepts/assembler_hooks.md"
+      },
+      {
+        "title": "Scaffolding and codemods",
+        "permalink": "guides/concepts/scaffolding",
+        "contentPath": "./concepts/scaffolding.md"
+      },
+      {
+        "title": "Extending AdonisJS",
+        "permalink": "guides/concepts/extending-adonisjs",
+        "contentPath": "./concepts/extending_adonisjs.md"
       }
     ]
   },
