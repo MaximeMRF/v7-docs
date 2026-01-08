@@ -35,8 +35,8 @@
     "#config/*": "./config/*.js"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^8.0.0-next.28",
-    "@adonisjs/eslint-config": "^3.0.0-next.7",
+    "@adonisjs/assembler": "^8.0.0-next.29",
+    "@adonisjs/eslint-config": "^3.0.0-next.9",
     "@adonisjs/prettier-config": "^1.4.5",
     "@adonisjs/tsconfig": "^2.0.0-next.3",
     "@alpinejs/collapse": "^3.15.3",
@@ -53,12 +53,12 @@
     "prettier": "^3.7.4",
     "typescript": "~5.9",
     "unpoly": "^3.12.1",
-    "vite": "^7.3.0",
-    "youch": "^4.1.0-beta.11"
+    "vite": "^7.3.1",
+    "youch": "^4.1.0-beta.13"
   },
   "dependencies": {
-    "@adonisjs/content": "^1.6.0",
-    "@adonisjs/core": "^7.0.0-next.19",
+    "@adonisjs/content": "^1.6.1",
+    "@adonisjs/core": "^7.0.0-next.21",
     "@adonisjs/static": "^2.0.0-next.1",
     "@adonisjs/vite": "^5.1.0-next.2",
     "@github/tab-container-element": "^4.8.2",
@@ -69,7 +69,7 @@
     "@types/luxon": "^3.7.1",
     "@vinejs/vine": "^4.2.0",
     "edge-iconify": "^2.0.1",
-    "edge-markdown": "^1.7.0",
+    "edge-markdown": "^1.7.1",
     "edge.js": "^6.4.0",
     "hast-util-to-text": "^4.0.2",
     "luxon": "^3.7.2",
