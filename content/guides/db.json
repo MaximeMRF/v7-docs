@@ -139,7 +139,7 @@
       {
         "title": "Introduction",
         "permalink": "guides/auth/introduction",
-        "contentPath": "./auth_and_authorization/introduction.md"
+        "contentPath": "./auth/introduction.md"
       },
       {
         "title": "Verifying User Credentials",
@@ -295,11 +295,6 @@
         "title": "Mail",
         "permalink": "guides/digging-deeper/mail",
         "contentPath": "./digging_deeper/mail.md"
-      },
-      {
-        "title": "Transmit",
-        "permalink": "guides/digging-deeper/transmit",
-        "contentPath": "./digging_deeper/transmit.md"
       },
       {
         "title": "OpenTelemetry",

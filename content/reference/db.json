@@ -38,6 +38,11 @@
         "title": "Helpers",
         "permalink": "reference/helpers",
         "contentPath": "./helpers.md"
+      },
+      {
+        "title": "Types helpers",
+        "permalink": "reference/types-helpers",
+        "contentPath": "./types_helpers.md"
       }
     ]
   }
