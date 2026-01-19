@@ -42,6 +42,12 @@
         "contentPath": "./configuration.md"
       },
       {
+        "title": "Deployment",
+        "permalink": "deployment",
+        "oldUrls": ["guides/getting-started/deployment"],
+        "contentPath": "./deployment.md"
+      },
+      {
         "title": "FAQs",
         "permalink": "faqs",
         "oldUrls": ["guides/preface/faqs"],

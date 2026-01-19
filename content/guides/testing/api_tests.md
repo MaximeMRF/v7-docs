@@ -32,6 +32,7 @@ import { authApiClient } from '@adonisjs/auth/plugins/api_client'
 export const plugins: Config['plugins'] = [
   assert(),
   pluginAdonisJS(app),
+  // [!code highlight:12]
   /**
    * Configures Japa's API client for making HTTP requests
    */
