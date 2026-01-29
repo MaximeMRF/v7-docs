@@ -37,15 +37,13 @@ import { generateRegistry } from '@tuyau/core/hooks'
 export default defineConfig({
   // ... other config
   hooks: {
-    onBuildStarting: [() => import('@adonisjs/vite/build_hook')],
-    onSourceFileCreated: [() => import('@adonisjs/core/hooks/decorators')],
     // [!code highlight]
-    routesScanned: [generateRegistry()],
+    init: [generateRegistry()],
   },
 })
 ```
 
-The `generateRegistry` hook runs whenever routes are scanned and generates files in the `.adonisjs/client` directory. These files contain the type information Tuyau needs to provide type safety.
+The `generateRegistry` hook runs during initialization and generates files in the `.adonisjs/client` directory. These files contain the type information Tuyau needs to provide type safety.
 
 #### Step 3. Configure TypeScript paths
 
@@ -175,9 +173,7 @@ import { generateRegistry } from '@tuyau/core/hooks'
 
 export default defineConfig({
   hooks: {
-    onBuildStarting: [() => import('@adonisjs/vite/build_hook')],
-    onSourceFileCreated: [() => import('@adonisjs/core/hooks/decorators')],
-    routesScanned: [generateRegistry()], // [!code highlight]
+    init: [generateRegistry()], // [!code highlight]
   },
 })
 ```
