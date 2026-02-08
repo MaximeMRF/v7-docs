@@ -161,6 +161,71 @@ OTEL_EXPORTER_OTLP_HEADERS=x-api-key=your-api-key
 
 See the [OpenTelemetry environment variable specification](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/) for all available options, and check [Advanced configuration](#advanced-configuration) for even more customization.
 
+### Multiple destinations (fan-out)
+
+When you need to export telemetry to multiple backends at once, use the `destinations` option.
+
+The package provides a generic OTLP destination helper via `destinations.otlp()`. Each destination can receive all signals (`traces`, `metrics`, `logs`) or only a subset.
+
+```ts title="config/otel.ts"
+import { defineConfig, destinations } from '@adonisjs/otel'
+
+export default defineConfig({
+  serviceName: 'my-app',
+
+  destinations: {
+    grafana: destinations.otlp({
+      endpoint: 'https://grafana-otlp.example.com',
+      headers: {
+        Authorization: `Basic ${process.env.GRAFANA_BASIC_AUTH}`,
+      },
+      signals: 'all',
+    }),
+
+    honeycomb: destinations.otlp({
+      endpoint: 'https://api.honeycomb.io',
+      headers: {
+        'x-honeycomb-team': process.env.HONEYCOMB_API_KEY!,
+        'x-honeycomb-dataset': process.env.HONEYCOMB_DATASET!,
+      },
+      signals: 'all',
+    }),
+  },
+})
+```
+
+When you set `endpoint`, the package automatically derives per-signal endpoints by appending:
+
+- `/v1/traces`
+- `/v1/metrics`
+- `/v1/logs`
+
+You can also provide explicit endpoints per signal:
+
+```ts title="config/otel.ts"
+import { defineConfig, destinations } from '@adonisjs/otel'
+
+export default defineConfig({
+  serviceName: 'my-app',
+
+  destinations: {
+    custom: destinations.otlp({
+      signals: ['traces', 'logs'],
+      endpoints: {
+        traces: 'https://collector-a.example.com/v1/traces',
+        logs: 'https://collector-b.example.com/v1/logs',
+      },
+    }),
+  },
+})
+```
+
+:::note
+
+`destinations` is optional. If you do not define it, the package keeps the default OpenTelemetry behavior and environment variable configuration (`OTEL_EXPORTER_OTLP_*`, `OTEL_TRACES_EXPORTER`, `OTEL_METRICS_EXPORTER`, `OTEL_LOGS_EXPORTER`).
+
+:::
+
 ### Debug mode
 
 Enable debug mode to print spans to the console during development.
