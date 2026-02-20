@@ -47,6 +47,9 @@ Alpine.data('trackScroll', function () {
           .slice()
           .reverse()
           .find((link) => {
+            if (!link.hash) {
+              console.log(link)
+            }
             const el = document.querySelector(decodeURIComponent(link.hash))
             if (el) {
               return el.getBoundingClientRect().top <= 200
