@@ -7,7 +7,7 @@ import { IncomingMessage } from 'node:http'
 import { type Infer } from '@vinejs/vine/types'
 import { BaseCommand } from '@adonisjs/core/ace'
 import { type singleDoc } from '#collections/docs'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 import { RequestFactory } from '@adonisjs/core/factories/http'
 
@@ -31,8 +31,8 @@ export default class BuildStatic extends BaseCommand {
     return edge.share({ request })
   }
 
-  async #writeOutput(uri: string, html: string) {
-    const outputPath = this.app.makePath('build/public', `${uri}.html`)
+  async #writeOutput(uri: string, html: string, extension: 'html' | 'md') {
+    const outputPath = this.app.makePath('build/public', `${uri}.${extension}`)
     await mkdir(dirname(outputPath), { recursive: true })
     await writeFile(outputPath, html)
   }
@@ -42,7 +42,10 @@ export default class BuildStatic extends BaseCommand {
     const docsService = await this.app.container.make(DocService)
     if (doc.permalink) {
       const html = await docsService.renderDoc(doc.permalink, this.#createView(`/${doc.permalink}`))
-      await this.#writeOutput(doc.permalink, html)
+      await this.#writeOutput(doc.permalink, html, 'html')
+
+      const mdPath = await docsService.retrieveLlmPath(doc.permalink)
+      await this.#writeOutput(doc.permalink, await readFile(mdPath, 'utf-8'), 'md')
     } else {
       await Promise.all(
         doc.variations!.map((variation) => {
@@ -66,7 +69,8 @@ export default class BuildStatic extends BaseCommand {
       await this.#createView('/').render('pages/home', {
         featuredSponsors: await featuredSponsors.load(),
         sponsors: await sponsors.load(),
-      })
+      }),
+      'html'
     )
   }
 
