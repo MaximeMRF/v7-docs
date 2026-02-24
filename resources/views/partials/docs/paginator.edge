@@ -43,15 +43,15 @@
           class="flex items-center justify-end h-16 bg-woodsmoke-900 hover:ring-1 hover:ring-woodsmoke-800/50 rounded-xl"
         >
           <div class="flex flex-col items-end justify-center px-5 min-w-0">
-            <span class="font-semibold text-right text-woodsmoke-200">
+            <span class="hidden sm:block font-semibold text-right text-woodsmoke-200">
               {{ paginationLinks.next.title }}
             </span>
-            <span class="hidden text-right text-woodsmoke-600 sm:block w-full truncate sm:w-72">
+            <span class="hidden sm:block text-right text-woodsmoke-600 w-full truncate sm:w-72">
               {{ nextDocMarkdown.frontmatter.description }}
             </span>
           </div>
 
-          <div class="w-px h-8 bg-woodsmoke-700"></div>
+          <div class="hidden sm:block w-px h-8 bg-woodsmoke-700"></div>
 
           <div class="pl-5 pr-3 text-woodsmoke-600 flex items-center space-x-1.5">
             <span class="font-medium tracking-tight text-woodsmoke-400 group-hover:text-white">
