@@ -140,9 +140,9 @@ export default class GenerateOgImages extends BaseCommand {
                 props: {
                   style: {
                     fontFamily: 'Instrument Sans',
-                    fontSize: '40px',
+                    fontSize: '56px',
                     color: '#72728C',
-                    lineHeight: 1.7,
+                    lineHeight: 1.8,
                     marginTop: '30px',
                     maxWidth: 1800,
                   },
