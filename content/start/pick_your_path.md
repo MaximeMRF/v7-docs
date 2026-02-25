@@ -64,7 +64,7 @@ In an API-only setup:
 - The two communicate exclusively through HTTP requests to your API endpoints.
 
 :::note
-In monorepos, you can use a [type-safe API client](../guides/frontend/tuyau.md) for true end-to-end typing across backend and frontend. [Transformers](../guides/frontend/transformers.md) also produce reusable, independent response types, so your UI can rely directly on the serialized API contract.
+In monorepos, you can use a [type-safe API client](../guides/frontend/api_client.md) for true end-to-end typing across backend and frontend. [Transformers](../guides/frontend/transformers.md) also produce reusable, independent response types, so your UI can rely directly on the serialized API contract.
 :::
 
 This approach covers a wide variety of applications: APIs for mobile apps (iOS, Android), web applications built with any frontend framework, desktop applications, or even multiple frontends (web and mobile) consuming the same API. The separation provides flexibility in how you deploy and scale each layer independently.
