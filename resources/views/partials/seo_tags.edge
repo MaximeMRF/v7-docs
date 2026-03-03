@@ -1,4 +1,3 @@
-@let(pageIdentifier = request.url() === '/' ? '/index' : request.url())
 <meta name="description" content="{{ meta.description }}">
 <meta name="twitter:title" content="{{ title }}">
 <meta name="twitter:description" content="{{ meta.description }}">
@@ -8,11 +7,10 @@
 <meta property="og:title" content="{{ title }}">
 <meta property="og:description" content="{{ meta.description }}">
 @if(meta.ogImage)
-  @let(ogImagePath = meta.ogImage === true
-    ? `resources/assets/og${pageIdentifier}.jpg`
-    : meta.ogImage
-  )
-  <meta name="twitter:image" content="{{ asset(ogImagePath) }}">
-  <meta property="og:image" content="{{ asset(ogImagePath) }}">
+  @let(ogImagePath = ogImageAsset(meta.ogImage, request.url()))
+  @if(ogImagePath)
+    <meta name="twitter:image" content="{{ ogImagePath }}">
+    <meta property="og:image" content="{{ ogImagePath }}">
+  @end
 @end
 <meta property="og:type" content="{{ meta.ogType ?? 'website' }}">
