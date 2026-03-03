@@ -28,9 +28,9 @@ import { defineConfig } from '@adonisjs/auth'
 import { basicAuthGuard, basicAuthUserProvider } from '@adonisjs/auth/basic_auth'
 
 const authConfig = defineConfig({
-  default: 'api',
+  default: 'basic',
   guards: {
-    api: basicAuthGuard({
+    basic: basicAuthGuard({
       provider: basicAuthUserProvider({
         model: () => import('#models/user'),
       }),
@@ -106,7 +106,7 @@ router
     const user = auth.getUserOrFail()
     return user.related('projects').query()
   })
-  .use(middleware.auth({ guards: ['api'] }))
+  .use(middleware.auth({ guards: ['basic'] }))
 ```
 
 The middleware throws [E_UNAUTHORIZED_ACCESS](../../reference/exceptions.md#e_unauthorized_access) if the credentials are missing or invalid.
