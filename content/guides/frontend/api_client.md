@@ -1102,6 +1102,10 @@ credentials: 'include' // Send cookies with every request
 
 This is essential for session-based authentication where your frontend and backend are on different domains.
 
+:::note
+When `credentials: 'include'` is set, Tuyau automatically handles CSRF protection. It reads the `XSRF-TOKEN` cookie and sends it as an `X-XSRF-TOKEN` header with every request — no extra configuration needed.
+:::
+
 ### Advanced options
 
 Tuyau is built on top of [Ky](https://github.com/sindresorhus/ky), which means you can pass any Ky option to `createTuyau`. Some useful advanced options include:
