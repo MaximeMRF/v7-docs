@@ -174,7 +174,7 @@
 }
 
 .prose table th {
-  @apply dark:text-woodsmoke-50;
+  @apply text-gray-900 dark:text-woodsmoke-50;
   text-align: left;
 }
 
