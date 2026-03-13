@@ -143,3 +143,20 @@
 .header-search span {
   @apply hidden sm:block;
 }
+
+/* ad style */
+#carbonads {
+  @apply pr-8 mb-10;
+}
+
+#carbonads > span {
+  @apply block p-4 text-center dark:bg-woodsmoke-950 border border-gray-300 dark:border-woodsmoke-800/70 rounded-md text-12;
+}
+
+#carbonads .carbon-img img {
+  @apply mx-auto rounded-md mb-2.5;
+}
+
+#carbonads .carbon-poweredby {
+  @apply inline-block mt-2 dark:text-woodsmoke-400;
+}
