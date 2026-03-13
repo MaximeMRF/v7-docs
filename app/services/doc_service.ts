@@ -2,6 +2,7 @@ import { type Edge } from 'edge.js'
 import { errors } from '@adonisjs/core'
 import { findDoc, resolveAsset, resolveLink } from '#collections/docs'
 import { adonisJsReleases } from '#collections/releases'
+import env from '#start/env'
 
 export class DocService {
   async renderDoc(permalink: string, view: ReturnType<Edge['share']>) {
@@ -15,6 +16,7 @@ export class DocService {
       .share({
         resolveLink,
         resolveAsset,
+        carbonAdUrl: env.get('CARBON_AD_URL'),
         releaseBlocks: releases.groupedByMonth(),
         ...doc,
         permalink,

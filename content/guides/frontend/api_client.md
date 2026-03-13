@@ -4,7 +4,14 @@ description: Learn how to use Tuyau, a type-safe HTTP client for AdonisJS applic
 
 # Type-safe API client
 
-This guide covers Tuyau, a type-safe HTTP client for AdonisJS applications. You will learn how to install and configure Tuyau, make type-safe API calls using route names, handle request parameters and validation, work with file uploads, generate URLs programmatically, and understand type-level serialization for end-to-end type safety between your backend and frontend.
+This guide covers Tuyau, a type-safe HTTP client for AdonisJS applications. You will learn how to:
+
+- Install and configure Tuyau for Inertia and monorepo setups
+- Make type-safe API calls using route names
+- Handle request parameters, validation, and error responses
+- Work with file uploads
+- Generate URLs programmatically
+- Understand type-level serialization for end-to-end type safety
 
 ## Overview
 
@@ -22,7 +29,7 @@ Tuyau installation differs depending on whether you're using Inertia (single rep
 
 ### Inertia applications
 
-For Inertia applications, installation is straightforward since your frontend and backend live in the same repository.
+For Inertia applications, installation is straightforward since your frontend and backend live in the same repository. **Official starter kits for [React](https://github.com/adonisjs/react-starter-kit/inertia-react) and [Vue](https://github.com/adonisjs/react-starter-kit/inertia-vue) come pre-configured with Tuyau, hence no manual setup is required.**
 
 ::::steps
 
@@ -36,7 +43,7 @@ npm install @tuyau/core
 
 :::step{title="Configure the assembler hook"}
 
-The assembler hook automatically generates the Tuyau registry whenever your codebase changes. Add the `generateRegistry` hook to your `adonisrc.ts` file:
+The assembler hook automatically generates the Tuyau registry whenever your codebase changes. Add the `generateRegistry` hook to your `adonisrc.ts` file. The `indexEntities` hook indexes your models and transformers for type generation, `indexPages` indexes your Inertia page components, and `generateRegistry` generates the Tuyau registry files in the `.adonisjs/client` directory.
 
 ```ts title="adonisrc.ts"
 import { indexPages } from '@adonisjs/inertia'
@@ -47,7 +54,7 @@ import { generateRegistry } from '@tuyau/core/hooks'
 export default defineConfig({
   // ... other config
   hooks: {
-    // [!code highlight:6]
+    // [!code highlight:5]
     init: [
       indexEntities({ transformers: { enabled: true, withSharedProps: true } }),
       indexPages({ framework: 'react' }),
@@ -57,13 +64,11 @@ export default defineConfig({
 })
 ```
 
-The `indexEntities` hook indexes your models and transformers for type generation, `indexPages` indexes your Inertia page components, and `generateRegistry` generates the Tuyau registry files in the `.adonisjs/client` directory.
-
 :::
 
 :::step{title="Configure TypeScript paths"}
 
-Configure path aliases in your Inertia `tsconfig.json` to import the generated registry:
+Configure path aliases in your Inertia `tsconfig.json` to import the generated registry.
 
 ```json title="inertia/tsconfig.json"
 {
@@ -82,7 +87,7 @@ Configure path aliases in your Inertia `tsconfig.json` to import the generated r
 
 :::step{title="Configure Vite aliases"}
 
-Add matching aliases to your `vite.config.ts`:
+Add matching aliases to your `vite.config.ts`.
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite'
@@ -111,7 +116,7 @@ export default defineConfig({
 
 :::step{title="Create the Tuyau client"}
 
-Create a file to initialize your Tuyau client:
+Create a file to initialize your Tuyau client.
 
 ```ts title="inertia/client.ts"
 import { registry } from '@generated/registry'
@@ -131,10 +136,6 @@ The `baseUrl` is set to `'/'` since the frontend and backend are served from the
 
 ::::
 
-:::tip
-**Recommended approach**: Instead of manual setup, use the [React Starter Kit](https://github.com/adonisjs/react-starter-kit) which comes with Tuyau pre-configured and ready to use.
-:::
-
 ### Monorepo applications
 
 For monorepo setups where your frontend and backend are separate packages, the setup requires additional configuration to share types between workspaces.
@@ -145,9 +146,9 @@ This guide assumes you're using npm workspaces with Turborepo (as used by the [A
 
 :::step{title="Structure your monorepo"}
 
-Organize your monorepo with separate workspaces for your API and frontend application:
+Organize your monorepo with separate workspaces for your API and frontend application.
 
-```
+```text title="Directory structure"
 my-app/
 ├── apps/
 │   ├── backend/      # AdonisJS backend
@@ -159,7 +160,7 @@ my-app/
 
 :::step{title="Install Tuyau in the backend"}
 
-Install `@tuyau/core` in your backend workspace — it handles both the assembler hook (registry generation) and exposes the client for your frontend to import:
+Install `@tuyau/core` in your backend workspace. It handles both the assembler hook (registry generation) and exposes the client for your frontend to import.
 
 ```json title="apps/backend/package.json"
 {
@@ -172,7 +173,7 @@ Install `@tuyau/core` in your backend workspace — it handles both the assemble
 }
 ```
 
-Then, in your frontend workspace, add your backend as a workspace dependency so it can import the generated registry and the Tuyau client:
+Then, in your frontend workspace, add your backend as a workspace dependency so it can import the generated registry and the Tuyau client.
 
 ```json title="apps/frontend/package.json"
 {
@@ -191,14 +192,27 @@ The `"*"` version range tells npm to resolve `@my-app/backend` from your local w
 
 :::step{title="Enable experimental decorators"}
 
-Tuyau uses TypeScript decorators internally. Enable them in your frontend `tsconfig.json`:
+Tuyau uses TypeScript decorators internally. Enable them in your frontend `tsconfig.json`. You also need to include your backend source files so TypeScript can resolve the shared types during type-checking.
 
 ```json title="apps/frontend/tsconfig.json"
 {
   "compilerOptions": {
     "experimentalDecorators": true, // [!code highlight]
     // ... other options
-  }
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx",
+    // [!code highlight:2]
+    "../backend/**/*.ts",
+    "../backend/.adonisjs/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    // [!code highlight:2]
+    "../backend/build",
+    "../backend/node_modules"
+  ]
 }
 ```
 
@@ -206,7 +220,7 @@ Tuyau uses TypeScript decorators internally. Enable them in your frontend `tscon
 
 :::step{title="Configure the backend"}
 
-In your backend AdonisJS application, add the `generateRegistry` hook just like in the Inertia setup:
+In your backend AdonisJS application, add the `generateRegistry` hook just like in the Inertia setup.
 
 ```ts title="apps/backend/adonisrc.ts"
 import { indexEntities } from '@adonisjs/core'
@@ -215,7 +229,7 @@ import { generateRegistry } from '@tuyau/core/hooks'
 
 export default defineConfig({
   hooks: {
-    // [!code highlight:6]
+    // [!code highlight:4]
     init: [
       indexEntities({ transformers: { enabled: true } }),
       generateRegistry(),
@@ -228,7 +242,7 @@ export default defineConfig({
 
 :::step{title="Export the registry"}
 
-Configure your backend `package.json` to export the generated Tuyau files so your frontend can import them:
+Configure your backend `package.json` to export the generated Tuyau files so your frontend can import them.
 
 ```json title="apps/backend/package.json"
 {
@@ -249,13 +263,13 @@ These exports allow your frontend to import the registry using `@my-app/backend/
 
 :::step{title="Create the Tuyau client"}
 
-In your frontend, create a file to initialize Tuyau:
+In your frontend, create a file to initialize Tuyau.
 
 ```ts title="apps/frontend/src/lib/client.ts"
 import { createTuyau } from '@tuyau/core/client'
 import { registry } from '@my-app/backend/registry'
 
-export const tuyau = createTuyau({
+export const client = createTuyau({
   baseUrl: import.meta.env.VITE_API_URL || 'http://localhost:3333',
   registry,
   headers: { Accept: 'application/json' },
@@ -278,8 +292,8 @@ The `baseUrl` should use an environment variable so you can configure different 
 
 ::::
 
-:::tip
-**Reference implementation**: Check out this [monorepo starter kit](https://github.com/Julien-R44/adonis-starter-kit) for a complete working example of Tuyau in a monorepo setup.
+:::tip{title="Stuck somewhere?"}
+Check out this [monorepo starter kit](https://github.com/Julien-R44/adonis-starter-kit) which uses TanStack for the frontend, alongside Tuyau for a Type-safe API client
 :::
 
 ## Your first API call
@@ -290,30 +304,28 @@ Let's build a complete example showing how Tuyau provides end-to-end type safety
 
 :::step{title="Define the backend route"}
 
-Create a route with a name using the `as` method:
-
 ```ts title="start/routes.ts"
 import router from '@adonisjs/core/services/router'
-const AuthController = () => import('#controllers/auth_controller')
+import { controllers } from '#generated/controllers'
 
-router.post('register', [AuthController, 'register']).as('auth.register')
+router.post('posts', [controllers.Posts, 'store'])
 ```
 
-The route name `auth.register` is what you'll use to call this endpoint from your frontend.
+The route name `posts.store` is automatically derived from the controller name and action. This is what you'll use to call the endpoint from your frontend.
 
 :::
 
 :::step{title="Create the validator"}
 
-Define validation rules using VineJS:
+Define validation rules using [VineJS](../basics/validation.md).
 
-```ts title="app/validators/auth.ts"
+```ts title="app/validators/post.ts"
 import vine from '@vinejs/vine'
 
-export const signupValidator = vine.create({
-  fullName: vine.string().nullable(),
-  email: vine.string().email().maxLength(254),
-  password: vine.string().minLength(8).maxLength(32),
+export const createPostValidator = vine.create({
+  title: vine.string().minLength(3).maxLength(255),
+  content: vine.string().minLength(10),
+  published: vine.boolean().optional(),
 })
 ```
 
@@ -321,54 +333,46 @@ export const signupValidator = vine.create({
 
 :::step{title="Implement the controller"}
 
-Create a controller action that uses the validator:
+Create a controller action that uses the validator. The call to `request.validateUsing()` is essential for Tuyau to understand the shape of your request body and provide accurate types on the frontend.
 
-```ts title="app/controllers/auth_controller.ts"
+```ts title="app/controllers/posts_controller.ts"
 import type { HttpContext } from '@adonisjs/core/http'
-import User from '#models/user'
-import { signupValidator } from '#validators/auth'
+import Post from '#models/post'
+import { createPostValidator } from '#validators/post'
 
-export default class AuthController {
-  async register({ request, auth }: HttpContext) {
-    /**
-     * Validate the request body using the signup validator.
-     * This is critical - Tuyau requires this to infer types.
-     */
-    const payload = await request.validateUsing(signupValidator)
+export default class PostsController {
+  async store({ request }: HttpContext) {
+    const payload = await request.validateUsing(createPostValidator)
 
-    const user = await User.create({ ...payload })
-    await auth.use('web').login(user)
-
-    return { authenticated: true }
+    const post = await Post.create(payload)
+    return post
   }
 }
 ```
-
-The call to `request.validateUsing()` is essential for Tuyau to understand the shape of your request body and provide accurate types on the frontend.
 
 :::
 
 :::step{title="Make the API call from your frontend"}
 
-Import your Tuyau client and call the route using its name:
+Import your Tuyau client and call the route using its name.
 
-```ts title="src/pages/register.tsx"
-import { tuyau } from '~/client'
+```ts title="src/pages/posts/create.tsx"
+import { client } from '~/client'
 
-async function handleRegister() {
-  const { authenticated } = await tuyau.auth.register({
+async function handleCreatePost() {
+  const post = await client.api.posts.store({
     body: {
-      email: 'foo@example.com',
-      fullName: 'Foo Bar',
-      password: 'password123',
+      title: 'My first blog post',
+      content: 'This is the content of the blog post',
+      published: true,
     },
   })
 
-  console.log('User registered:', authenticated)
+  console.log('Post created:', post)
 }
 ```
 
-Notice how the route name `auth.register` becomes a method chain `tuyau.auth.register()`. The `body` parameter is fully typed based on your validator - your IDE will autocomplete the fields and TypeScript will catch any mistakes.
+Notice how the route name `posts.store` becomes a method chain `client.api.posts.store()`. The `body` parameter is fully typed based on your validator. Your IDE will autocomplete the fields and TypeScript will catch any mistakes.
 
 :::
 
@@ -380,69 +384,59 @@ Tuyau provides three different ways to make API calls, each suited for different
 
 ### Using route names with proxy syntax
 
-The recommended approach is using route names with the proxy syntax. Route names map directly to method chains on your Tuyau client:
+The recommended approach is using route names with the proxy syntax. Route names map directly to method chains on your Tuyau client.
 
 ```ts
-// Route: router.post('register').as('auth.register')
-const result = await tuyau.auth.register({
+// Route: router.post('register', [controllers.Auth, 'register'])
+const result = await client.api.auth.register({
   body: { email: 'foo@ok.com', password: 'password123' }
 })
 
-// Route: router.get('users/:id').as('users.show')
-const user = await tuyau.users.show({
+// Route: router.get('users/:id', [controllers.Users, 'show'])
+const user = await client.api.users.show({
   params: { id: '1' },
   query: { include: 'posts' }
 })
 ```
 
-Each segment of the route name becomes a property access. The route `users.show` becomes `tuyau.users.show()`. This syntax provides excellent autocomplete and keeps your code clean.
+Each segment of the route name becomes a property access. The route `users.show` becomes `client.api.users.show()`. This syntax provides excellent autocomplete and keeps your code clean.
 
 :::note
-Route name segments that contain underscores are converted to camelCase in the proxy syntax. For example, a route named `auth.new_account.store` becomes `tuyau.auth.newAccount.store()`.
-:::
-
-:::tip
-If the proxy syntax does not resolve types for a particular route name, use the `request()` method as a fallback — it supports all route names and is functionally identical:
-
-```ts
-const result = await tuyau.request('auth.new_account.store', {
-  body: { email: 'foo@ok.com', password: 'password123' }
-})
-```
+Route name segments that contain underscores are converted to camelCase in the proxy syntax. For example, a route named `auth.new_account.store` becomes `client.api.auth.newAccount.store()`.
 :::
 
 ### Using the request method
 
-The `request` method provides an alternative syntax that explicitly passes the route name as a string:
+The `request` method provides an alternative syntax that explicitly passes the route name as a string.
 
 ```ts
-const result = await tuyau.request('auth.register', {
+const result = await client.request('auth.register', {
   body: { email: 'foo@ok.com', password: 'password123' }
 })
 
-const user = await tuyau.request('users.show', {
+const user = await client.request('users.show', {
   params: { id: '1' },
   query: { include: 'posts' }
 })
 ```
 
-This approach is functionally identical to the proxy syntax but can be useful when you want to store route names in variables or generate them dynamically.
+This approach is functionally identical to the proxy syntax but provides a different API for constructing the request URL.
 
 ### Using HTTP method functions
 
-For cases where you need to work directly with URLs instead of route names, Tuyau provides HTTP method functions:
+Sometimes you need to call endpoints that are not part of your AdonisJS backend, for example a third-party API or a legacy service. In these cases, you can use HTTP method functions that accept URLs directly.
 
 ```ts
-const user = await tuyau.get('/users/:id', {
+const user = await client.get('/users/:id', {
   params: { id: '123' },
   query: { include: 'posts' }
 })
 
-const post = await tuyau.post('/posts', {
+const post = await client.post('/posts', {
   body: { title: 'Hello', content: 'World' }
 })
 
-const updated = await tuyau.patch('/posts/:id', {
+const updated = await client.patch('/posts/:id', {
   params: { id: '456' },
   body: { title: 'Updated title' }
 })
@@ -450,52 +444,42 @@ const updated = await tuyau.patch('/posts/:id', {
 
 This syntax mirrors the fetch API but maintains type safety for parameters and responses.
 
-:::tip
-**Which method should I use?**
-
-We recommend using route names (proxy syntax or `request` method) over URL-based calls. Route names provide a layer of indirection - if you change a URL, you only need to update it in one place (the route definition) rather than searching through your frontend codebase for every hardcoded URL string.
-
-The proxy syntax (`tuyau.auth.register()`) is slightly more ergonomic with better autocomplete, while the `request` method is useful when route names come from variables or configuration.
-:::
-
 ## Working with parameters
 
 API calls often require different types of parameters: route parameters for dynamic URL segments, query parameters for filtering or pagination, and request bodies for data submission. Tuyau handles all of these with full type safety.
 
 ### Route parameters
 
-Route parameters substitute dynamic segments in your URLs. When you define a route with parameters, Tuyau automatically types them:
+Route parameters substitute dynamic segments in your URLs. When you define a route with parameters, Tuyau automatically types them.
 
 ```ts title="start/routes.ts"
-router.get('users/:id', [UsersController, 'show']).as('users.show')
-router.get('users/:userId/posts/:postId', [PostsController, 'show']).as('users.posts.show')
+router.get('users/:id', [controllers.Users, 'show'])
+router.get('users/:userId/posts/:postId', [controllers.Posts, 'show'])
 ```
 
-Pass route parameters using the `params` option:
+Pass route parameters using the `params` option. TypeScript will enforce that you provide all required parameters with the correct names, and your IDE will autocomplete parameter names and catch typos at compile time.
 
 ```ts
 // Single parameter
-const user = await tuyau.users.show({
+const user = await client.api.users.show({
   params: { id: '123' }
 })
 
 // Multiple parameters
-const post = await tuyau.users.posts.show({
+const post = await client.api.users.posts.show({
   params: { userId: '123', postId: '456' }
 })
 ```
 
-TypeScript will enforce that you provide all required parameters with the correct names. Your IDE will autocomplete parameter names and catch typos or missing parameters at compile time.
-
 ### Query parameters
 
-Query parameters append to the URL for filtering, pagination, or passing optional data. Use the `query` option to pass them:
+Query parameters append to the URL for filtering, pagination, or passing optional data. Use the `query` option to pass them. Query parameters are automatically URL-encoded, and if your backend validates query parameters, those types are inferred on the frontend.
 
 ```ts
 // Route: GET /posts
-const posts = await tuyau.posts.index({
-  query: { 
-    page: 1, 
+const posts = await client.api.posts.index({
+  query: {
+    page: 1,
     limit: 10,
     status: 'published'
   }
@@ -503,14 +487,12 @@ const posts = await tuyau.posts.index({
 // Results in: GET /posts?page=1&limit=10&status=published
 ```
 
-Query parameters are automatically URL-encoded and appended to the request. If your backend validates query parameters, those types are inferred on the frontend.
-
 ### Request body
 
-For POST, PUT, and PATCH requests, send data using the `body` option:
+For POST, PUT, and PATCH requests, send data using the `body` option. The request body types are automatically inferred from your validator. Every field is typed, and TypeScript will prevent you from sending fields that don't exist in your validator or with incorrect types.
 
 ```ts
-const post = await tuyau.posts.store({
+const post = await client.api.posts.store({
   body: {
     title: 'My First Post',
     content: 'This is the content',
@@ -519,14 +501,12 @@ const post = await tuyau.posts.store({
 })
 ```
 
-The request body types are automatically inferred from your validator. Every field is typed, and TypeScript will prevent you from sending fields that don't exist in your validator or with incorrect types.
-
 ### Combining parameters
 
-You can combine route parameters, query parameters, and body in a single request:
+You can combine route parameters, query parameters, and body in a single request. Tuyau handles building the complete URL, encoding query parameters, and serializing the body while maintaining type safety for all three parameter types.
 
 ```ts
-const comment = await tuyau.posts.comments.store({
+const comment = await client.api.posts.comments.store({
   params: { postId: '123' },
   query: { notify: true },
   body: {
@@ -536,15 +516,13 @@ const comment = await tuyau.posts.comments.store({
 })
 ```
 
-Tuyau handles building the complete URL, encoding query parameters, and serializing the body while maintaining type safety for all three parameter types.
-
 ## Request validation and type inference
 
 The connection between your backend validators and frontend types is what makes Tuyau's type safety possible. Understanding how this works is crucial for getting the most out of Tuyau.
 
 ### The role of request.validateUsing()
 
-For Tuyau to infer types from your validators, you must use `request.validateUsing()` in your controller actions:
+For Tuyau to infer types from your validators, you must use `request.validateUsing()` in your controller actions. Without it, Tuyau cannot determine what shape your request body should have, and your frontend types will fall back to `any`.
 
 ```ts title="app/controllers/posts_controller.ts"
 import type { HttpContext } from '@adonisjs/core/http'
@@ -552,25 +530,17 @@ import { createPostValidator } from '#validators/post'
 
 export default class PostsController {
   async store({ request }: HttpContext) {
-    /**
-     * This call is required for type inference.
-     * Tuyau analyzes the validator passed to validateUsing()
-     * and generates types for the frontend.
-     */
     const payload = await request.validateUsing(createPostValidator)
-    
-    // Create the post with validated data
+
     const post = await Post.create(payload)
     return post
   }
 }
 ```
 
-Without `request.validateUsing()`, Tuyau cannot determine what shape your request body should have, and your frontend types will fall back to `any`.
-
 ### Defining validators
 
-Use VineJS to define validation schemas. Every field you define becomes part of the type signature on the frontend:
+Use [VineJS](../basics/validation.md) to define validation schemas. Every field you define becomes part of the type signature on the frontend.
 
 ```ts title="app/validators/post.ts"
 import vine from '@vinejs/vine'
@@ -584,10 +554,10 @@ export const createPostValidator = vine.create({
 })
 ```
 
-On your frontend, the `body` parameter will have this exact shape:
+On your frontend, the `body` parameter will have this exact shape. TypeScript will enforce required fields, prevent extra fields, and ensure correct types for each property.
 
 ```ts
-await tuyau.posts.store({
+await client.api.posts.store({
   body: {
     title: 'My Post',        // string (required)
     content: 'Content here', // string (required)
@@ -598,11 +568,9 @@ await tuyau.posts.store({
 })
 ```
 
-TypeScript will enforce required fields, prevent extra fields, and ensure correct types for each property.
-
 ### Query parameter validation
 
-Query parameters can also be validated and typed. Define a validator for query parameters and use it in your controller:
+Query parameters can also be validated and typed. Define a validator for query parameters and use it in your controller. The frontend query parameters will be typed to match your validator, so TypeScript only allows valid values.
 
 ```ts title="app/validators/post.ts"
 export const listPostsValidator = vine.create({
@@ -620,16 +588,14 @@ export default class PostsController {
     const posts = await Post.query()
       .where('status', filters.status)
       .paginate(filters.page || 1, filters.limit || 10)
-    
+
     return posts
   }
 }
 ```
 
-The frontend query parameters are now typed:
-
 ```ts
-const posts = await tuyau.posts.index({
+const posts = await client.api.posts.index({
   query: {
     page: 1,
     limit: 20,
@@ -647,10 +613,10 @@ By default, requests behave like regular promises. Successful responses resolve 
 
 ### Using `.safe()`
 
-If you prefer not to throw, call `.safe()` on the request. It returns a tuple where the first element is the data and the second element is the error:
+If you prefer not to throw, call `.safe()` on the request. It returns a tuple where the first element is the data and the second element is the error. The error is always typed as `TuyauError`, giving you a single error shape for both HTTP and network failures.
 
 ```ts
-const [data, error] = await tuyau.posts.show({
+const [data, error] = await client.api.posts.show({
   params: { id: '123' }
 }).safe()
 
@@ -662,11 +628,9 @@ if (error) {
 console.log(data.title)
 ```
 
-The error returned by `.safe()` is always typed as `TuyauError`. This gives you a single error shape for both HTTP and network failures.
-
 ### Narrowing HTTP errors with `isStatus()`
 
-When your controller returns typed non-2xx responses, Tuyau automatically extracts those error payloads from the controller's return type and makes them available on the client. Use `isStatus()` to narrow the error to a specific status code:
+When your controller returns typed non-2xx responses, Tuyau automatically extracts those error payloads from the controller's return type and makes them available on the client. Use `isStatus()` to narrow the error to a specific status code. After `error.isStatus(404)`, TypeScript narrows `error.response` to the exact payload shape returned by `response.notFound()` in the controller.
 
 ```ts title="app/controllers/posts_controller.ts"
 import type { HttpContext } from '@adonisjs/core/http'
@@ -685,12 +649,12 @@ export default class PostsController {
 ```
 
 ```ts
-const [data, error] = await tuyau.posts.show({
+const [data, error] = await client.api.posts.show({
   params: { id: '123' }
 }).safe()
 
 if (error?.isStatus(404)) {
-  // error.response is narrowed to { message: string, key: string } — inferred from the controller
+  // error.response is narrowed to { message: string, key: string } (inferred from the controller)
   console.log(error.response.message)
   console.log(error.response.key)
   return
@@ -699,14 +663,12 @@ if (error?.isStatus(404)) {
 console.log(data.post.title)
 ```
 
-After `error.isStatus(404)`, TypeScript narrows `error.response` to the exact payload shape returned by `response.notFound()` in the controller.
-
 ### Validation errors
 
-Routes that use `request.validateUsing()` automatically get a typed 422 error response. The type uses `SimpleError` from `@vinejs/vine/types`. Use `isValidationError()` as a shorthand for `isStatus(422)`:
+Routes that use `request.validateUsing()` automatically get a typed 422 error response. The type uses `SimpleError` from `@vinejs/vine/types`. Use `isValidationError()` as a shorthand for `isStatus(422)`.
 
 ```ts
-const [data, error] = await tuyau.posts.store({
+const [data, error] = await client.api.posts.store({
   body: { title: '', content: '' }
 }).safe()
 
@@ -718,7 +680,7 @@ if (error?.isValidationError()) {
 }
 ```
 
-You can customize the error type or disable it via the `validationErrorType` option in the `generateRegistry` hook in case your API returns a different shape for validation errors:
+You can customize the error type or disable it via the `validationErrorType` option in the `generateRegistry` hook in case your API returns a different shape for validation errors.
 
 ```ts title="adonisrc.ts"
 generateRegistry({
@@ -729,10 +691,10 @@ generateRegistry({
 
 ### Distinguishing HTTP and network failures
 
-The `TuyauError` type includes a `kind` property. Use it when you need to treat network failures differently from server responses:
+The `TuyauError` type includes a `kind` property. Use it when you need to treat network failures differently from server responses.
 
 ```ts
-const [, error] = await tuyau.posts.show({
+const [, error] = await client.api.posts.show({
   params: { id: '123' }
 }).safe()
 
@@ -745,13 +707,13 @@ For network failures, `status` and `response` are `undefined` because the server
 
 ### Using try/catch
 
-If you prefer the throwing flow, cast the caught error using `Route.Error` to get full type narrowing:
+If you prefer the throwing flow, cast the caught error using `Route.Error` to get full type narrowing.
 
 ```ts
 import type { Route } from '@tuyau/core/types'
 
 try {
-  await tuyau.posts.show({ params: { id: '123' } })
+  await client.api.posts.show({ params: { id: '123' } })
 } catch (e) {
   const error = e as Route.Error<'posts.show'>
 
@@ -801,13 +763,13 @@ Tuyau automatically handles file uploads by detecting File objects in your reque
 
 ### Basic file upload
 
-When you pass a File object in your request body, Tuyau converts the entire payload to FormData:
+When you pass a File object in your request body, Tuyau converts the entire payload to FormData automatically. Other fields like `description` are included in the same FormData payload.
 
 ```ts title="src/pages/profile.tsx"
-import { tuyau } from '~/client'
+import { client } from '~/client'
 
 async function uploadAvatar(file: File) {
-  const result = await tuyau.users.avatar.update({
+  const result = await client.api.users.avatar.update({
     body: {
       avatar: file,
       description: 'My new avatar'
@@ -824,19 +786,17 @@ function handleFileSelect(event: ChangeEvent<HTMLInputElement>) {
 }
 ```
 
-The presence of the File object triggers FormData encoding automatically. The `description` field is included in the same FormData payload.
-
 :::note
 When Tuyau detects a File object in the body, it converts the entire payload to FormData. A few things to keep in mind:
 
 - **Field names must match your validator.** The keys in the `body` object (e.g., `avatar`, `description`) become FormData field names, which must match the corresponding keys in your VineJS validator.
 - **You can mix files and regular fields.** Scalar values like strings and numbers are included in the same FormData payload alongside file fields.
-- **Optional file fields.** If a file field is optional in your validator, simply omit the key from the body — do not send `undefined` or `null`, as these may be serialized as literal strings in FormData.
+- **Optional file fields.** If a file field is optional in your validator, simply omit the key from the body. Do not send `undefined` or `null`, as these may be serialized as literal strings in FormData.
 :::
 
 ### Backend handling
 
-On the backend, handle file uploads using AdonisJS's standard file validation:
+On the backend, handle file uploads using AdonisJS's standard file validation.
 
 ```ts title="app/validators/user.ts"
 import vine from '@vinejs/vine'
@@ -870,10 +830,10 @@ export default class UsersController {
 
 ### Multiple file uploads
 
-Upload multiple files by including multiple File objects in your payload:
+Upload multiple files by including multiple File objects in your payload. Tuyau handles the FormData serialization for arrays of files automatically.
 
 ```ts
-const result = await tuyau.posts.attachments.create({
+const result = await client.api.posts.attachments.create({
   params: { postId: '123' },
   body: {
     files: [file1, file2, file3],
@@ -882,15 +842,13 @@ const result = await tuyau.posts.attachments.create({
 })
 ```
 
-Tuyau handles the FormData serialization for arrays of files automatically.
-
 ## Generating URLs
 
 Tuyau provides the `urlFor` helper to generate URLs from route names in a type-safe way. This is useful when you need URLs for links, redirects, or sharing, rather than making an actual API call.
 
 ### Basic URL generation
 
-The `urlFor` method searches across all HTTP methods and returns the URL as a string:
+The `urlFor` method searches across all HTTP methods and returns the URL as a string. TypeScript ensures you provide the correct route name and required parameters. Invalid route names or missing parameters are caught at compile time.
 
 ```ts
 import { urlFor } from '~/client'
@@ -903,11 +861,9 @@ const profileUrl = urlFor('users.profile', { id: '123' })
 // Returns: '/users/123/profile'
 ```
 
-TypeScript ensures you provide the correct route name and required parameters. Invalid route names or missing parameters are caught at compile time.
-
 ### Method-specific URL generation
 
-For more control, use method-specific variants like `urlFor.get` or `urlFor.post`. These return an object containing both the HTTP method and URL:
+For more control, use method-specific variants like `urlFor.get` or `urlFor.post`. These return an object containing both the HTTP method and URL.
 
 ```ts
 const userUrl = urlFor.get('users.show', { id: 1 })
@@ -921,7 +877,7 @@ This is useful when you need to know both the URL and which HTTP method should b
 
 ### Query parameters in URLs
 
-Add query parameters to generated URLs using the `qs` option:
+Add query parameters to generated URLs using the `qs` option. Query parameters are automatically URL-encoded and appended to the generated URL.
 
 ```ts
 const postsUrl = urlFor.get('posts.index', {}, {
@@ -930,14 +886,12 @@ const postsUrl = urlFor.get('posts.index', {}, {
 // Returns: { method: 'get', url: '/posts?page=2&limit=10&status=published' }
 ```
 
-Query parameters are automatically URL-encoded and appended to the generated URL.
-
 ### Wildcard parameters
 
-For routes with wildcard parameters, pass them as arrays:
+For routes with wildcard parameters, pass them as arrays.
 
 ```ts
-// Route: router.get('docs/*', [DocsController, 'show']).as('docs.show')
+// Route: router.get('docs/*', [controllers.Docs, 'show'])
 
 const docsUrl = urlFor.get('docs.show', { '*': ['introduction', 'getting-started'] })
 // Returns: { method: 'get', url: '/docs/introduction/getting-started' }
@@ -945,7 +899,7 @@ const docsUrl = urlFor.get('docs.show', { '*': ['introduction', 'getting-started
 
 ### Positional parameters
 
-Instead of an object, you can pass parameters as an array in the order they appear in the route:
+Instead of an object, you can pass parameters as an array in the order they appear in the route.
 
 ```ts
 // Route: /users/:id/posts/:postId
@@ -963,16 +917,16 @@ Positional parameters can be convenient when parameter names are obvious from co
 
 ## Route introspection
 
-Tuyau provides two methods for inspecting routes at runtime: `has()` to check if a route exists in the registry, and `current()` to determine which route matches the current page URL.
+Tuyau provides two methods for inspecting routes at runtime. These are useful for building navigation components that highlight active links or conditionally rendering UI based on the available routes in your application.
 
 ### Checking if a route exists
 
-The `has()` method checks whether a route name exists in the registry:
+The `has()` method checks whether a route name exists in the registry.
 
 ```ts
-tuyau.has('users.show')   // true
-tuyau.has('auth.login')   // true
-tuyau.has('nope')         // false
+client.has('users.show')   // true
+client.has('auth.login')   // true
+client.has('nope')         // false
 ```
 
 This is useful for conditionally rendering UI elements based on whether a route is available in the current application.
@@ -981,49 +935,41 @@ This is useful for conditionally rendering UI elements based on whether a route 
 
 The `current()` method uses `window.location` to determine which route the user is currently on. It only matches navigable routes (GET or HEAD).
 
-**Without arguments**, it returns the current route name, or `undefined` if no route matches (or when running server-side):
+**Without arguments**, it returns the current route name, or `undefined` if no route matches (or when running server-side).
 
 ```ts
 // On /users/42
-tuyau.current() // 'users.show'
+client.current() // 'users.show'
 
 // On /unknown/path
-tuyau.current() // undefined
+client.current() // undefined
 ```
 
-**With a route name**, it returns `true` if the current URL matches that route:
+**With a route name**, it returns `true` if the current URL matches that route.
 
 ```ts
 // On /users/42
-tuyau.current('users.show') // true
-tuyau.current('auth.login') // false
+client.current('users.show') // true
+client.current('auth.login') // false
 ```
 
 **With wildcard patterns**, you can match groups of routes using `*`:
 
 ```ts
 // On /users/42
-tuyau.current('users.*')    // true
-tuyau.current('posts.*')    // false
+client.current('users.*')    // true
+client.current('posts.*')    // false
 ```
 
-**With options**, you can additionally verify that the current URL params and/or query string match expected values:
+**With options**, you can additionally verify that the current URL params and/or query string match expected values.
 
 ```ts
 // On /users/42?foo=bar
-tuyau.current('users.show', { params: { id: 42 } })           // true
-tuyau.current('users.show', { params: { id: 99 } })           // false
-tuyau.current('users.show', { query: { foo: 'bar' } })        // true
-tuyau.current('users.show', { query: { foo: 'baz' } })        // false
+client.current('users.show', { params: { id: 42 } })           // true
+client.current('users.show', { params: { id: 99 } })           // false
+client.current('users.show', { query: { foo: 'bar' } })        // true
+client.current('users.show', { query: { foo: 'baz' } })        // false
 ```
-
-:::note
-Both `has()` and `current()` provide autocomplete for known route names. `current()` also accepts arbitrary strings for wildcard patterns like `'users.*'`.
-:::
-
-:::note
-`current()` returns `undefined` (no args) or `false` (with route name) when running server-side since `window.location` is not available.
-:::
 
 ## Type-level serialization
 
@@ -1031,7 +977,7 @@ An important concept to understand when working with Tuyau is type-level seriali
 
 ### Date serialization
 
-When you pass a Date object from your backend to the frontend, it cannot be transmitted as a Date object through JSON. Instead, it's serialized to a string. Tuyau's types automatically reflect this transformation:
+When you pass a Date object from your backend to the frontend, it cannot be transmitted as a Date object through JSON. Instead, it's serialized to a string. Tuyau's types automatically reflect this transformation.
 
 ```ts title="app/controllers/posts_controller.ts"
 export default class PostsController {
@@ -1047,24 +993,21 @@ export default class PostsController {
 }
 ```
 
-On the frontend, Tuyau automatically infers the type as string, not Date:
+On the frontend, Tuyau automatically infers the type as `string`, not `Date`. This is because dates are serialized to ISO string format when sent over HTTP, and Tuyau's type system reflects this reality at compile time.
 
 ```ts
-const post = await tuyau.posts.show({ params: { id: '1' } })
+const post = await client.api.posts.show({ params: { id: '1' } })
 
 // TypeScript knows createdAt is a string, not a Date
 console.log(post.createdAt.toUpperCase()) // ✅ Works - string method
 console.log(post.createdAt.getTime())     // ❌ Error - Date method doesn't exist
 ```
 
-This makes sense because dates are serialized to ISO string format when sent over HTTP. Tuyau's type system reflects this reality at compile time.
-
 ### Model serialization
 
-A common mistake is returning Lucid models directly from your controllers. When you do this, Tuyau cannot accurately infer the response types because models serialize to a generic `ModelObject` type that contains almost no useful type information:
+A common mistake is returning [Lucid models](../database/lucid.md) directly from your controllers. When you do this, Tuyau cannot accurately infer the response types because models serialize to a generic `ModelObject` type that contains almost no useful type information.
 
-```ts
-// ❌ Problematic - returns a model directly
+```ts title="❌ Problematic - returns a model directly"
 export default class PostsController {
   async show({ params }: HttpContext) {
     const post = await Post.find(params.id)
@@ -1073,19 +1016,16 @@ export default class PostsController {
 }
 ```
 
-On the frontend, you'll get a generic `ModelObject` type with no specific fields:
+On the frontend, you'll get a generic `ModelObject` type with no specific fields.
 
 ```ts
-const post = await tuyau.posts.show({ params: { id: '1' } })
+const post = await client.api.posts.show({ params: { id: '1' } })
 // post has type ModelObject - no autocomplete, no type safety
 ```
 
-### Solution: HTTP Transformers
+To maintain type safety, explicitly transform your models using [HTTP Transformers](./transformers.md) to plain objects before returning them.
 
-To maintain type safety, explicitly transform your models using [HTTP Transformers](./transformers.md) to plain objects before returning them:
-
-```ts
-// ✅ Better - explicit serialization
+```ts title="✅ Better - explicit serialization"
 export default class PostsController {
   async show({ params, serialize }: HttpContext) {
     const post = await Post.find(params.id)
@@ -1094,10 +1034,10 @@ export default class PostsController {
 }
 ```
 
-Now the frontend has accurate types:
+Now the frontend has accurate types.
 
 ```ts
-const post = await tuyau.posts.show({ params: { id: '1' } })
+const post = await client.api.posts.show({ params: { id: '1' } })
 // post.title is string
 // post.author.name is string
 // Full autocomplete and type safety
@@ -1107,10 +1047,10 @@ const post = await tuyau.posts.show({ params: { id: '1' } })
 
 By default, Tuyau parses responses based on the `Content-Type` header: JSON for `application/json`, `ArrayBuffer` for `application/octet-stream`, and text for everything else.
 
-You can override this per-request with the `responseType` option (`'json'`, `'text'`, `'arrayBuffer'`, or `'blob'`):
+You can override this per-request with the `responseType` option (`'json'`, `'text'`, `'arrayBuffer'`, or `'blob'`).
 
 ```ts
-const blob = await tuyau.files.download({
+const blob = await client.api.files.download({
   params: { id: '123' },
   responseType: 'blob',
 })
@@ -1121,24 +1061,30 @@ const blob = await tuyau.files.download({
 The `createTuyau` function accepts several configuration options to customize how your API client behaves.
 
 ```ts
-const tuyau = createTuyau({
+const client = createTuyau({
   baseUrl: import.meta.env.VITE_API_URL || 'http://localhost:3333',
   registry,
 })
 ```
 
-**baseUrl** (string, required)
-The base URL of your API server. All requests are prefixed with this URL. Use environment variables to configure different URLs for development and production:
+::::options
 
-**registry** (object, required)
+:::option{name="baseUrl" dataType="string" required}
+The base URL of your API server. All requests are prefixed with this URL. Use environment variables to configure different URLs for development and production.
+:::
+
+:::option{name="registry" dataType="object" required}
 The generated registry that maps route names to URLs and types. Import this from the generated files in `.adonisjs/client` or from your backend package in a monorepo setup.
+:::
+
+::::
 
 ### Recommended options
 
-These optional settings are highly recommended for most applications:
+These optional settings are highly recommended for most applications.
 
 ```ts
-const tuyau = createTuyau({
+const client = createTuyau({
   baseUrl: 'http://localhost:3333',
   registry,
   headers: { Accept: 'application/json' },
@@ -1146,49 +1092,56 @@ const tuyau = createTuyau({
 })
 ```
 
-**headers** (object, optional)
-Default headers sent with every request. Setting `Accept: 'application/json'` ensures your API returns JSON responses rather than HTML error pages or other formats:
+::::options
+
+:::option{name="headers" dataType="object"}
+Default headers sent with every request. Setting `Accept: 'application/json'` ensures your API returns JSON responses rather than HTML error pages or other formats.
 
 ```ts
-headers: { 
+headers: {
   Accept: 'application/json',
   'X-Custom-Header': 'value'
 }
 ```
+:::
 
-**credentials** (string, optional)
-Controls whether cookies are sent with cross-origin requests. Set to `'include'` to send cookies for authentication:
+:::option{name="credentials" dataType="string"}
+Controls whether cookies are sent with cross-origin requests. Set to `'include'` to send cookies for session-based authentication where your frontend and backend are on different domains.
 
 ```ts
-credentials: 'include' // Send cookies with every request
+credentials: 'include'
 ```
+:::
 
-This is essential for session-based authentication where your frontend and backend are on different domains.
+::::
 
 :::note
-When `credentials: 'include'` is set, Tuyau automatically handles CSRF protection. It reads the `XSRF-TOKEN` cookie and sends it as an `X-XSRF-TOKEN` header with every request — no extra configuration needed.
+When `credentials: 'include'` is set, Tuyau automatically handles CSRF protection. It reads the `XSRF-TOKEN` cookie and sends it as an `X-XSRF-TOKEN` header with every request. No extra configuration is needed.
 :::
 
 ### Advanced options
 
 Tuyau is built on top of [Ky](https://github.com/sindresorhus/ky), which means you can pass any Ky option to `createTuyau`. Some useful advanced options include:
 
-**timeout** (number, optional)
-Request timeout in milliseconds. Requests that exceed this duration are automatically aborted:
+::::options
+
+:::option{name="timeout" dataType="number"}
+Request timeout in milliseconds. Requests that exceed this duration are automatically aborted.
 
 ```ts
-const tuyau = createTuyau({
+const client = createTuyau({
   baseUrl: 'http://localhost:3333',
   registry,
   timeout: 30000, // 30 seconds
 })
 ```
+:::
 
-**retry** (number | object, optional)
-Configure automatic retry behavior for failed requests:
+:::option{name="retry" dataType="number | object"}
+Configure automatic retry behavior for failed requests.
 
 ```ts
-const tuyau = createTuyau({
+const client = createTuyau({
   baseUrl: 'http://localhost:3333',
   registry,
   retry: {
@@ -1198,12 +1151,13 @@ const tuyau = createTuyau({
   }
 })
 ```
+:::
 
-**hooks** (object, optional)
-Add request/response interceptors for logging, authentication, or error handling:
+:::option{name="hooks" dataType="object"}
+Add request/response interceptors for logging, authentication, or error handling.
 
 ```ts
-const tuyau = createTuyau({
+const client = createTuyau({
   baseUrl: 'http://localhost:3333',
   registry,
   hooks: {
@@ -1226,13 +1180,16 @@ const tuyau = createTuyau({
   }
 })
 ```
+:::
+
+::::
 
 ### Access token authentication
 
-For APIs that use access token authentication (like the [API Starter Kit](https://github.com/adonisjs/api-starter-kit)), use the `hooks.beforeRequest` option to dynamically attach the `Authorization` header to every request:
+For APIs that use access token authentication (like the [API Starter Kit](https://github.com/adonisjs/api-starter-kit)), use the `hooks.beforeRequest` option to dynamically attach the `Authorization` header to every request.
 
 ```ts
-const tuyau = createTuyau({
+const client = createTuyau({
   baseUrl: 'http://localhost:3333',
   registry,
   headers: { Accept: 'application/json' },
@@ -1253,22 +1210,9 @@ This pattern reads the token from storage before each request. You can adapt it 
 
 For a complete list of available options, see the [Ky documentation](https://github.com/sindresorhus/ky#options).
 
-:::tip
-All Ky options can also be passed per-request, not just at client creation. This is useful for setting a custom timeout, attaching an `AbortSignal`, or adding headers for a single call:
-
-```ts
-const data = await tuyau.posts.index({
-  query: { page: 1 },
-  timeout: 5000,
-  signal: controller.signal,
-  headers: { 'X-Custom': 'value' },
-})
-```
-:::
-
 ### Filtering routes
 
-By default, `generateRegistry` includes all named routes. Use the `routes` option to include or exclude specific routes from the generated registry:
+By default, `generateRegistry` includes all named routes. Use the `routes` option to include or exclude specific routes from the generated registry.
 
 ```ts title="adonisrc.ts"
 generateRegistry({
@@ -1288,7 +1232,7 @@ Tuyau integrates with several parts of the AdonisJS ecosystem and provides addit
 
 ### Inertia integration
 
-If you're using Inertia, Tuyau provides enhanced type safety for Inertia-specific features. The `@adonisjs/inertia` package exports a `<TuyauProvider>` component that enables type-safe routing and other cool features:
+If you're using Inertia, Tuyau provides enhanced type safety for Inertia-specific features. The `@adonisjs/inertia` package exports a `<TuyauProvider>` component that enables type-safe routing and other cool features.
 
 ```tsx
 import { TuyauProvider } from '@adonisjs/inertia/react'
@@ -1303,7 +1247,7 @@ function App() {
 }
 ```
 
-The `<Link>` component's `route` prop is fully typed - TypeScript ensures you use valid route names and provide required parameters. See the [Inertia documentation](https://docs.adonisjs.com/guides/inertia) for complete details on this integration and additional features.
+The `<Link>` component's `route` prop is fully typed. TypeScript ensures you use valid route names and provide required parameters. See the [Inertia documentation](https://docs.adonisjs.com/guides/inertia) for complete details on this integration and additional features.
 
 ### TanStack Query integration
 
@@ -1314,6 +1258,5 @@ The `@tuyau/tanstack-query` package provides React hooks that integrate Tuyau wi
 Rather than setting up Tuyau manually, consider using one of these starter kits with Tuyau pre-configured:
 
 - **[React Starter Kit](https://github.com/adonisjs/react-starter-kit)** - Official AdonisJS starter with React, Inertia, and Tuyau ready to use
+- **[Vue Starter Kit](https://github.com/adonisjs/vue-starter-kit)** - Official AdonisJS starter with Vue, Inertia, and Tuyau ready to use
 - **[Monorepo Starter Kit](https://github.com/Julien-R44/adonis-starter-kit)** - Complete monorepo setup with separate frontend and backend packages
-
-These repositories serve as reference implementations showing best practices for Tuyau configuration.

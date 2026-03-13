@@ -167,7 +167,8 @@
   margin-bottom: 24px;
   font-size: var(--text-sm);
 }
-.prose table.releases td.release-tag {
+.prose table.releases td.release-tag,
+.prose table.releases th.release-tag {
   width: 150px;
   text-align: right;
 }

@@ -206,21 +206,19 @@ Define nested objects in your schema for each data source you want to validate.
 import vine from '@vinejs/vine'
 
 export const showUserValidator = vine.create({
-  // Validate fields from the request body
+  // Validate request body and query string values
   username: vine.string(),
   password: vine.string(),
+  filters: vine.object({
+    page: vine.number().optional(),
+    limit: vine.number().optional()
+  }),
   
   // Validate route parameters
   params: vine.object({
     id: vine.number()
   }),
-  
-  // Validate query string parameters
-  qs: vine.object({
-    page: vine.number().optional(),
-    limit: vine.number().optional()
-  }),
-  
+    
   // Validate cookies
   cookies: vine.object({
     sessionId: vine.string()
@@ -233,7 +231,7 @@ export const showUserValidator = vine.create({
 })
 ```
 
-The validator automatically extracts data from the correct location based on these property names (`params`, `qs`, `cookies`, `headers`).
+The validator automatically extracts data from the correct location based on these property names (`params`, `cookies`, `headers`).
 
 When you call `request.validateUsing()`, all these sources are validated simultaneously.
 
@@ -247,7 +245,7 @@ export default class UsersController {
     
     // Access validated data
     console.log(payload.params.id)
-    console.log(payload.qs?.page)
+    console.log(payload.filters.page)
     console.log(payload.cookies.sessionId)
   }
 }
