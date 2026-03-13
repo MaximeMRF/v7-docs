@@ -76,6 +76,21 @@ Alpine.data('openInAI', function (aiBaseUrl, docPath) {
   }
 })
 
+up.compiler('[up-carbon-ad]', function (element) {
+  const src = element.getAttribute('up-carbon-ad')
+  const existing = document.getElementById('_carbonads_js')
+  if (existing) {
+    existing.remove()
+  }
+
+  const script = document.createElement('script')
+  script.async = true
+  script.type = 'text/javascript'
+  script.src = src
+  script.id = '_carbonads_js'
+  element.appendChild(script)
+})
+
 up.viewport.config.revealPadding = 55
 up.on('up:location:changed', function () {
   window.dispatchEvent(new CustomEvent('hide-mobile-nav'))
